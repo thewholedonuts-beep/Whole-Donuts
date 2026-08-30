@@ -5,7 +5,9 @@ const { validateDatabaseEnvironment } = require('../config/environment');
 
 async function runMigrations() {
   validateDatabaseEnvironment();
-  const migrationsDirectory = path.resolve(__dirname, '../../../../../data/postgres/migrations');
+  const migrationsDirectory =
+    process.env.MIGRATIONS_DIRECTORY ||
+    path.resolve(__dirname, '../../../../../data/postgres/migrations');
   const migrationFiles = (await fs.readdir(migrationsDirectory))
     .filter((file) => /^\d+_.+\.sql$/.test(file))
     .sort();

@@ -1,6 +1,7 @@
 FROM node:22-alpine
 
 ENV NODE_ENV=production
+ENV MIGRATIONS_DIRECTORY=/app/database/migrations
 WORKDIR /app/api
 
 COPY apps/merch/api/package.json apps/merch/api/package-lock.json ./

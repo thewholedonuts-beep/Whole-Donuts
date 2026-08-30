@@ -35,6 +35,7 @@ The frontend API base URL is public and baked into the frontend build. Every oth
 | `NEXT_PUBLIC_API_BASE_URL` | `https://<api-domain>/api`; frontend build environment only |
 | `TRUST_PROXY` | Managed host proxy hop count, normally `1` |
 | `DATABASE_SSL_CA` | Provider CA only when required; retain verified TLS by default |
+| `MIGRATIONS_DIRECTORY` | Image default; do not override unless the migration files are mounted elsewhere |
 
 Set `NODE_ENV=production`. Production startup fails when its required configuration is missing, insecure TLS is selected without explicit acknowledgement, origins are not HTTPS, or the Shopify store value is malformed.
 
