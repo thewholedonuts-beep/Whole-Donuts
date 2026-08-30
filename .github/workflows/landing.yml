@@ -1,0 +1,47 @@
+name: Validate landing gateway and domain router
+
+on:
+  pull_request:
+    paths:
+      - 'apps/landing/**'
+      - 'backend/router/**'
+      - '.github/workflows/landing.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'apps/landing/**'
+      - 'backend/router/**'
+      - '.github/workflows/landing.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  landing:
+    name: Validate landing static files
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Syntax-check gateway script
+        run: node --check apps/landing/public/gateway.js
+
+  router:
+    name: Validate domain router
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend/router
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: backend/router/package-lock.json
+      - run: npm ci
+      - run: npm run check
+      - run: npm test
