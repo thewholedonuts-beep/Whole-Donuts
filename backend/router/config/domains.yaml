@@ -1,0 +1,58 @@
+# Domain → service routing map
+# All values are offline configuration only.
+# No credentials, IPs, DNS record operations, or deployment commands are stored here.
+
+domains:
+  # ── Entry point ────────────────────────────────────────
+  - domain: wenevergonnaclose.com
+    service: landing
+    description: Main gateway — stick figure intro + ecosystem splitter
+
+  # ── Whole Donuts ecosystem ─────────────────────────────
+  - domain: wholedonuts.org
+    service: wholedonuts
+    ecosystem: donuts
+    description: Whole Donuts main site
+
+  - domain: wholedonuts.app
+    service: wholedonuts
+    ecosystem: donuts
+    description: Whole Donuts web application
+
+  - domain: wholedonuts.me
+    service: wholedonuts
+    ecosystem: donuts
+    description: Whole Donuts personal/community portal
+
+  - domain: wholedonuts.pro
+    service: wholedonuts
+    ecosystem: donuts
+    description: Whole Donuts professional platform
+
+  - domain: wholedonuts.buzz
+    service: wholedonuts
+    ecosystem: donuts
+    description: Whole Donuts community buzz / events
+
+  - domain: wholedonuts.store
+    service: merch
+    ecosystem: donuts
+    type: ecommerce
+    description: Whole Donuts merch store (Young Adults Table)
+
+  # ── Nurtured Chef ecosystem ────────────────────────────
+  - domain: thenurturedchef.com
+    service: nurturedchef
+    ecosystem: chef
+    description: Nurtured Chef main site
+
+  - domain: thenurturedchef.foundation
+    service: nurturedchef
+    ecosystem: chef
+    description: Nurtured Chef foundation / non-profit
+
+  - domain: thenutur3dchef.com
+    service: merch
+    ecosystem: chef
+    type: ecommerce
+    description: Nurtured Chef merch store
