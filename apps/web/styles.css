@@ -159,21 +159,6 @@ h1 {
   transform: translateY(-1px);
 }
 
-.continue-button {
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 999px;
-  padding: 0.85rem 1.2rem;
-  color: var(--text);
-  font-weight: 700;
-  text-decoration: none;
-}
-
-.continue-button:hover,
-.continue-button:focus-visible {
-  border-color: var(--glow);
-  color: var(--glow);
-}
-
 .progress-text {
   margin: 0;
   color: var(--muted);
@@ -386,29 +371,5 @@ h1 {
 
   h1 {
     max-width: none;
-  }
-}
-
-@media (max-width: 480px) {
-  .page-shell {
-    padding: 1.5rem 1rem 2.5rem;
-  }
-
-  h1 {
-    font-size: clamp(2rem, 8vw, 2.8rem);
-  }
-
-  .figure-field {
-    min-height: 260px;
-  }
-
-  .primary-button {
-    width: 100%;
-    text-align: center;
-  }
-
-  .cta-row {
-    flex-direction: column;
-    align-items: stretch;
   }
 }
