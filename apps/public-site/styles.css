@@ -205,7 +205,25 @@ footer a{color:var(--ink);font-weight:900}
   .rail nav a{padding:.7rem .5rem}
   .panel{padding:6rem 1.2rem 5rem}
   .world-entry{padding:1rem}
-  .world-frame{min-height:720px;height:82vh;border-radius:1rem}
+  .world-frame{min-height:400px;height:65vh;border-radius:1rem}
+  .course-tabs{grid-template-columns:repeat(2,1fr)}
+  .course-grid,
+  .product-grid,
+  .template-grid,
+  .ambassador-grid,
+  .choices,
+  .brochure-grid,
+  .brochure-meta,
+  .pass-actions{grid-template-columns:1fr;display:grid}
+  .award-signin-actions{display:grid}
+  .journey-offer-actions{display:grid}
+  .counter-head{display:block}
+  .pass-card{align-items:flex-start}
+  .pass-card img{width:7rem;height:7rem}
+  .pass-actions a,
+  .pass-actions button{width:100%}
+  .choice{min-height:9rem}
+  footer{left:var(--rail)}
   .answer-grid{grid-template-columns:1fr 1fr}
   .answer-grid--two{grid-template-columns:1fr}
   footer{left:var(--rail)}
