@@ -5,7 +5,6 @@ import { FormEvent, useState } from 'react';
 import { apiRequest } from '@/lib/api';
 
 type AuthResponse = {
-  token: string;
   sponsor: {
     id: string;
     name: string;
@@ -37,12 +36,7 @@ export default function HomePage() {
           method: 'POST',
           body: JSON.stringify(payload),
         });
-        if (typeof window !== 'undefined') {
-          localStorage.setItem('wd-token', response.token);
-          localStorage.setItem('wd-sponsor-id', response.sponsor.id);
-          localStorage.setItem('wd-sponsor-name', response.sponsor.name);
-          window.location.href = '/dashboard';
-        }
+        window.location.href = '/dashboard';
       }
     } catch (error) {
       setMessage(error instanceof Error ? error.message : 'Unable to complete request.');

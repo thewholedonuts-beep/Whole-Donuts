@@ -1,13 +1,15 @@
 const jwt = require('jsonwebtoken');
+const { equalValues } = require('./security');
 
 function authenticateToken(req, res, next) {
   const authHeader = req.headers.authorization || '';
-  const [, token] = authHeader.split(' ');
-  const adminKey = process.env.ADMIN_API_KEY;
-  const headerKey = req.headers['x-admin-key'];
+  const [, bearerToken] = authHeader.split(' ');
+  const token = bearerToken || req.cookies?.wd_session;
+  const operatorKey = process.env.OPERATOR_API_KEY;
+  const headerKey = req.headers['x-operator-key'];
 
-  if (!token && adminKey && headerKey === adminKey) {
-    req.user = { isAdmin: true };
+  if (!token && operatorKey && equalValues(headerKey, operatorKey)) {
+    req.user = { isOperator: true };
     return next();
   }
 
@@ -30,7 +32,7 @@ function requireSponsorAccess(req, res, next) {
   }
 
   const requestedSponsorId = req.params.id || req.body.sponsorId;
-  const isAdmin = Boolean(req.user.isAdmin);
+  const isAdmin = Boolean(req.user.isOperator);
 
   if (isAdmin || !requestedSponsorId || requestedSponsorId === req.user.sponsorId) {
     return next();
@@ -40,7 +42,7 @@ function requireSponsorAccess(req, res, next) {
 }
 
 function requireAdmin(req, res, next) {
-  if (req.user && req.user.isAdmin) {
+  if (req.user && req.user.isOperator) {
     return next();
   }
 

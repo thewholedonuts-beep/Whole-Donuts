@@ -1,140 +1,50 @@
 # Whole Donuts Merch Platform
 
-Whole Donuts Merch Platform is a full-stack e-commerce system for sponsor-managed merchandise, referral tracking, and Shopify/Printful-enabled fulfillment. It combines a Node.js + Express API, PostgreSQL schema, and a Next.js 14 dashboard for sponsor operations.
+Sponsor merchandise operations built with a Next.js dashboard, Express API, PostgreSQL, Shopify, and Printful fulfillment. Shopify is the checkout and order system of record; PostgreSQL stores Whole Donuts sponsor, referral, and operational data.
 
-## Project structure
-
-```text
-.
-├── backend/                # Express API, sponsor logic, Shopify sync, fraud prevention
-├── frontend/               # Next.js 14 + TailwindCSS sponsor dashboard
-├── database/               # PostgreSQL SQL migrations
-├── docs/                   # Setup guides
-├── .env.example            # Shared environment template
-├── .gitignore
-└── README.md
-```
-
-## Architecture
+## Production architecture
 
 ```text
-[Next.js Dashboard]
-        |
-        v
-[Express API] ---> [PostgreSQL]
-     |   |               |
-     |   └--> Referral analytics, sponsors, orders, products
-     |
-     ├--> Shopify Admin API / Webhooks
-     └--> Printful integration hooks
+https://merch.example.com       Next.js dashboard
+             |
+https://merch-api.example.com   Express API, Shopify webhooks, Printful status
+             |
+           private managed PostgreSQL
 ```
 
-## Business model
+Deploy the dashboard and API as separate managed HTTPS services on one provider with managed PostgreSQL. The database must remain private to the provider network. Use `docker-compose.production.example.yml` only as a service definition; it intentionally does not provision a database, TLS endpoint, reverse proxy, or secrets.
 
-- **20% markup:** all product pricing is based on `base_cost * 1.20`.
-- **Sponsor tiers:**
-  - Bronze: $0–$499 contribution, 1 customization/month, max 10% discount
-  - Silver: $500–$2499 contribution, 3 customizations/month, max 20% discount
-  - Gold: $2500+ contribution, unlimited customization, max 30% discount
-- **Referral rewards:**
-  - Before 4 uses: `clicks * 0.5 + shares * 1 + conversions * 5`
-  - After 4+ uses: conversions only (`conversions * 5`)
-  - Discount earned: `min(score * 0.01, 0.30)` with tier-specific caps
+Read [the deployment guide](docs/DEPLOYMENT.md) before creating a production service. It includes the complete environment-value matrix, release procedure, and rollback steps.
 
-## Backend setup
+## Local development
 
-1. Copy the environment file:
-   ```bash
-   cp .env.example backend/.env
-   ```
-2. Install dependencies:
-   ```bash
-   cd backend
-   npm install
-   ```
-3. Configure PostgreSQL and run the migration in `database/migrations/001_initial_schema.sql`.
-4. Start the backend:
-   ```bash
-   npm run dev
-   ```
-5. Health check:
-   ```bash
-   curl http://localhost:3001/health
-   ```
+1. Copy `.env.example` to `backend/.env` and replace the local database value.
+2. Run `npm ci` in both `backend/` and `frontend/`.
+3. Create the local PostgreSQL database, then run `npm run migrate` from `backend/`.
+4. Start `npm run dev` from both service directories.
+5. Open `http://localhost:3000`; the API health endpoint is `http://localhost:3001/health`.
 
-### Backend API highlights
+The frontend reads `NEXT_PUBLIC_API_BASE_URL`. It is public build-time configuration, never a secret. The backend reads secrets only from its runtime environment.
 
-- `POST /api/sponsors/register` – create sponsor and referral code
-- `POST /api/sponsors/login` – sponsor JWT auth
-- `GET /api/sponsors/:id/dashboard` – sponsor analytics and recent orders
-- `POST /api/referral/validate` – fraud-aware code validation
-- `POST /api/referral/event` – click/share/conversion tracking
-- `GET /api/products` – product catalog
-- `POST /api/orders` – create dashboard order
-- `POST /api/orders/webhook/shopify` – Shopify webhook ingestion
-- `POST /api/shopify/sync-products` – pull products from Shopify
+## Service commands
 
-## Frontend setup
+| Directory | Command | Purpose |
+|---|---|---|
+| `backend/` | `npm start` | Run the Express API |
+| `backend/` | `npm run migrate` | Apply tracked forward-only migrations |
+| `backend/` | `npm run refresh-sponsor-metrics` | Run the scheduled metric refresh once |
+| `backend/` | `npm test` | Test webhook HMAC verification |
+| `frontend/` | `npm run build` | Build the production dashboard |
 
-1. Install dependencies:
-   ```bash
-   cd frontend
-   npm install
-   ```
-2. Set `NEXT_PUBLIC_API_BASE_URL` if the API is not running on `http://localhost:3001/api`.
-3. Start the frontend:
-   ```bash
-   npm run dev
-   ```
-4. Open `http://localhost:3000`.
+Run the metric refresh from one provider scheduler, not from each API instance.
 
-## Database setup
+## Commerce integration
 
-1. Create the database:
-   ```sql
-   CREATE DATABASE wholedonuts_merch;
-   ```
-2. Enable `pgcrypto` and run the migration:
-   ```bash
-   psql "$DATABASE_URL" -f database/migrations/001_initial_schema.sql
-   ```
-3. Seed products or sync from Shopify using `POST /api/shopify/sync-products`.
+- [Shopify setup](docs/SHOPIFY_SETUP.md) covers the custom app, scopes, verified webhook topics, and callback URL.
+- [Printful setup](docs/PRINTFUL_SETUP.md) covers the Shopify fulfillment connection and server-side API token.
+- `POST /api/orders/webhook/shopify` accepts only configured topics with a valid Shopify HMAC and webhook delivery ID. Replayed deliveries are acknowledged without reprocessing.
+- `GET /api/printful/status` is an operator-only connectivity check. Do not expose integration tokens to the frontend.
 
-## Environment variables
+## Security boundary
 
-- **Database:** `DATABASE_URL`, `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASSWORD`
-- **JWT:** `JWT_SECRET`, `JWT_EXPIRES_IN`
-- **Shopify:** `SHOPIFY_STORE_URL`, `SHOPIFY_ACCESS_TOKEN`, `SHOPIFY_WEBHOOK_SECRET`
-- **Printful:** `PRINTFUL_API_KEY`
-- **Security:** `IP_HASH_SALT`, `RATE_LIMIT_WINDOW_MS`, `RATE_LIMIT_MAX_REQUESTS`, optional `ADMIN_API_KEY`
-- **App:** `NODE_ENV`, `PORT`, `FRONTEND_URL`, optional `NEXT_PUBLIC_API_BASE_URL`
-
-## Running the platform
-
-Open two terminals:
-
-```bash
-# Terminal 1
-cd backend
-npm run dev
-
-# Terminal 2
-cd frontend
-npm run dev
-```
-
-Then:
-1. Register a sponsor from the landing page.
-2. Log in to generate/store a JWT in the browser.
-3. Browse products, customize merch, and review recent orders.
-4. Use the backend API or Shopify sync endpoints for catalog/order automation.
-
-## Shopify summary
-
-- Create a custom Shopify app with Admin API access.
-- Add the order webhook pointing to `/api/orders/webhook/shopify`.
-- Store credentials in `.env`.
-- Sync products from Shopify into PostgreSQL.
-- Connect Shopify to Printful for POD fulfillment.
-
-See `docs/SHOPIFY_SETUP.md` for the full checklist.
+Browser sessions use HttpOnly, Secure production cookies; the API enforces CSRF validation for cookie-authenticated mutations. Sponsor access remains scoped to the authenticated sponsor. Operator-only routes require the separate `X-Operator-Key` credential, whose value must be stored in the provider secret manager and sent only by trusted operations tooling.

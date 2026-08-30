@@ -1,8 +1,8 @@
 const express = require('express');
-const crypto = require('crypto');
 const { query, withTransaction } = require('../config/database');
 const { authenticateToken, requireAdmin } = require('../middleware/auth');
 const { applyTierDiscountCap } = require('../utils/effortScore');
+const { allowedShopifyTopics, verifyShopifyWebhook } = require('../services/shopifyWebhook');
 
 const router = express.Router();
 
@@ -69,7 +69,7 @@ router.post('/', authenticateToken, async (req, res, next) => {
       return res.status(400).json({ error: 'Customer name and email are required.' });
     }
 
-    if (sponsorId && !req.user.isAdmin && sponsorId !== req.user.sponsorId) {
+    if (sponsorId && !req.user.isOperator && sponsorId !== req.user.sponsorId) {
       return res.status(403).json({ error: 'You do not have access to create orders for this sponsor.' });
     }
 
@@ -138,7 +138,7 @@ router.get('/:id', authenticateToken, async (req, res, next) => {
       return res.status(404).json({ error: 'Order not found.' });
     }
 
-    if (!req.user.isAdmin && result.rows[0].sponsor_id !== req.user.sponsorId) {
+    if (!req.user.isOperator && result.rows[0].sponsor_id !== req.user.sponsorId) {
       return res.status(403).json({ error: 'You do not have access to this order.' });
     }
 
@@ -192,7 +192,7 @@ router.get('/', authenticateToken, async (req, res, next) => {
       values.push(req.query.status);
     }
 
-    if (!req.user.isAdmin) {
+    if (!req.user.isOperator) {
       conditions.push(`sponsor_id = $${conditions.length + 1}`);
       values.push(req.user.sponsorId);
     }
@@ -206,24 +206,45 @@ router.get('/', authenticateToken, async (req, res, next) => {
 });
 
 router.post('/webhook/shopify', async (req, res, next) => {
+  let eventId;
   try {
     const secret = process.env.SHOPIFY_WEBHOOK_SECRET;
     const signature = req.get('x-shopify-hmac-sha256');
-    const rawBody = req.rawBody || JSON.stringify(req.body || {});
+    const rawBody = req.rawBody;
+    const topic = req.get('x-shopify-topic');
+    const deliveryId = req.get('x-shopify-webhook-id');
 
-    if (secret) {
-      if (!signature) {
-        return res.status(401).json({ error: 'Missing Shopify webhook signature.' });
-      }
-      const generated = crypto.createHmac('sha256', secret).update(rawBody).digest('base64');
-      if (generated !== signature) {
-        return res.status(401).json({ error: 'Invalid Shopify webhook signature.' });
-      }
+    if (!secret) {
+      return res.status(503).json({ error: 'Shopify webhook verification is not configured.' });
+    }
+    if (!Buffer.isBuffer(rawBody) || !signature || !verifyShopifyWebhook(rawBody, signature, secret)) {
+      return res.status(401).json({ error: 'Invalid Shopify webhook signature.' });
+    }
+    if (!topic || !allowedShopifyTopics().includes(topic)) {
+      return res.status(400).json({ error: 'Unsupported Shopify webhook topic.' });
+    }
+    if (!deliveryId) {
+      return res.status(400).json({ error: 'Missing Shopify webhook delivery ID.' });
     }
 
-    const payload = typeof req.body === 'object' && !Buffer.isBuffer(req.body)
-      ? req.body
-      : JSON.parse(rawBody || '{}');
+    const payload = JSON.parse(rawBody.toString('utf8'));
+    const claimed = await query(
+      `INSERT INTO integration_events (provider, delivery_id, topic, payload, status)
+       VALUES ('shopify', $1, $2, $3::jsonb, 'processing')
+       ON CONFLICT (provider, delivery_id) DO UPDATE
+         SET status = 'processing',
+             attempts = integration_events.attempts + 1,
+             received_at = NOW(),
+             error_message = NULL
+       WHERE integration_events.status = 'failed'
+          OR integration_events.received_at < NOW() - INTERVAL '5 minutes'
+       RETURNING id`,
+      [deliveryId, topic, JSON.stringify(payload)]
+    );
+    if (!claimed.rowCount) {
+      return res.status(200).json({ received: true, duplicate: true });
+    }
+    eventId = claimed.rows[0].id;
 
     const orderPayload = {
       shopifyOrderId: String(payload.id),
@@ -252,6 +273,7 @@ router.post('/webhook/shopify', async (req, res, next) => {
          RETURNING *`,
         [String(payload.id), payload.fulfillment_status || 'processing', payload.fulfillments?.[0]?.tracking_number || null]
       );
+      await query('UPDATE integration_events SET status = $2, processed_at = NOW() WHERE id = $1', [eventId, 'processed']);
       return res.json({ order: update.rows[0], synced: true });
     }
 
@@ -275,8 +297,15 @@ router.post('/webhook/shopify', async (req, res, next) => {
       ]
     );
 
+    await query('UPDATE integration_events SET status = $2, processed_at = NOW() WHERE id = $1', [eventId, 'processed']);
     return res.status(201).json({ order: created.rows[0], synced: true });
   } catch (error) {
+    if (eventId) {
+      await query(
+        'UPDATE integration_events SET status = $2, error_message = $3 WHERE id = $1',
+        [eventId, 'failed', error.message.slice(0, 1000)]
+      ).catch((updateError) => console.error('Failed to record Shopify webhook error', updateError));
+    }
     return next(error);
   }
 });

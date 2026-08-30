@@ -24,8 +24,7 @@ router.post('/sync-products', authenticateToken, requireAdmin, async (req, res, 
     const response = await fetch(`${baseUrl}/products.json?limit=50`, { headers });
 
     if (!response.ok) {
-      const text = await response.text();
-      return res.status(response.status).json({ error: 'Failed to sync Shopify products.', details: text });
+      return res.status(response.status).json({ error: 'Failed to sync Shopify products.' });
     }
 
     const data = await response.json();
@@ -99,7 +98,7 @@ router.post('/create-order', authenticateToken, requireAdmin, async (req, res, n
 
     const data = await response.json();
     if (!response.ok) {
-      return res.status(response.status).json({ error: 'Failed to create Shopify order.', details: data });
+      return res.status(response.status).json({ error: 'Failed to create Shopify order.' });
     }
 
     return res.status(201).json({ shopifyOrder: data.order });

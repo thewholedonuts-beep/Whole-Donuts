@@ -5,6 +5,7 @@ const { query, withTransaction } = require('../config/database');
 const { authenticateToken, requireSponsorAccess } = require('../middleware/auth');
 const { generateUniqueReferralCode } = require('../utils/referralCode');
 const { calculateEffortScore, applyTierDiscountCap } = require('../utils/effortScore');
+const { clearSessionCookies, setSessionCookies } = require('../middleware/security');
 
 const router = express.Router();
 
@@ -84,13 +85,19 @@ router.post('/login', async (req, res, next) => {
         email: sponsor.email,
       },
       process.env.JWT_SECRET,
-      { expiresIn: process.env.JWT_EXPIRES_IN || '7d' }
+      { expiresIn: process.env.JWT_EXPIRES_IN || '8h' }
     );
 
-    return res.json({ token, sponsor: sanitizeSponsor(sponsor) });
+    setSessionCookies(res, token);
+    return res.json({ sponsor: sanitizeSponsor(sponsor) });
   } catch (error) {
     return next(error);
   }
+});
+
+router.post('/logout', (_req, res) => {
+  clearSessionCookies(res);
+  return res.status(204).end();
 });
 
 router.get('/:id', authenticateToken, requireSponsorAccess, async (req, res, next) => {
@@ -128,9 +135,7 @@ router.put('/:id', authenticateToken, requireSponsorAccess, async (req, res, nex
     }
 
     if (req.body.safety_status !== undefined) {
-      const adminKey = process.env.ADMIN_API_KEY;
-      const headerKey = req.headers['x-admin-key'];
-      const isAdmin = Boolean(req.user?.isAdmin) || (adminKey && headerKey === adminKey);
+      const isAdmin = Boolean(req.user?.isOperator);
 
       if (!isAdmin) {
         return res.status(403).json({ error: 'Only admins can update sponsor safety status.' });
@@ -160,7 +165,7 @@ router.put('/:id', authenticateToken, requireSponsorAccess, async (req, res, nex
   }
 });
 
-router.get('/:id/dashboard', authenticateToken, requireSponsorAccess, async (req, res, next) => {
+async function getDashboard(req, res, next) {
   try {
     const sponsorResult = await query('SELECT * FROM sponsors WHERE id = $1', [req.params.id]);
     if (!sponsorResult.rowCount) {
@@ -221,6 +226,17 @@ router.get('/:id/dashboard', authenticateToken, requireSponsorAccess, async (req
   } catch (error) {
     return next(error);
   }
-});
+}
+
+function attachCurrentSponsor(req, res, next) {
+  if (!req.user.sponsorId) {
+    return res.status(403).json({ error: 'Sponsor access is required.' });
+  }
+  req.params.id = req.user.sponsorId;
+  return next();
+}
+
+router.get('/me/dashboard', authenticateToken, attachCurrentSponsor, requireSponsorAccess, getDashboard);
+router.get('/:id/dashboard', authenticateToken, requireSponsorAccess, getDashboard);
 
 module.exports = router;

@@ -1,38 +1,39 @@
-# Shopify Setup Guide
+# Shopify production setup
 
-## 1. Create your Shopify store
-1. Sign in to Shopify and create a store for Whole Donuts merch.
-2. Choose a plan that includes access to custom apps and webhooks.
-3. Confirm your store URL (for example `your-store.myshopify.com`).
+## Custom app
 
-## 2. Get API credentials
-1. In Shopify Admin, go to **Settings → Apps and sales channels → Develop apps**.
-2. Create a custom app for the merch platform.
-3. Grant the app access to products, orders, inventory, and fulfillment scopes as needed.
-4. Copy the Admin API access token and store URL into `.env`.
+Create a custom app in the Whole Donuts Shopify store and grant only the scopes required by the enabled workflows:
 
-## 3. Set up webhooks for orders
-1. In the custom app or **Settings → Notifications → Webhooks**, create an order webhook.
-2. Point it to `https://your-backend-domain/api/orders/webhook/shopify`.
-3. Use `orders/create`, `orders/updated`, and `orders/fulfilled` topics if you want full lifecycle sync.
-4. Copy the Shopify webhook secret into `SHOPIFY_WEBHOOK_SECRET`.
+- `read_products` and `read_inventory` for catalog synchronization.
+- `read_orders` for order reconciliation.
+- `write_orders` only if trusted operations will use `POST /api/shopify/create-order`.
+- Fulfillment scopes only if the app will manage fulfillment directly rather than through Printful's Shopify app.
 
-## 4. Configure environment variables
-Set these values in `backend/.env` or the root `.env` used by your deployment:
-- `SHOPIFY_STORE_URL`
-- `SHOPIFY_ACCESS_TOKEN`
-- `SHOPIFY_WEBHOOK_SECRET`
-- `FRONTEND_URL`
-- `PRINTFUL_API_KEY`
+Record the store hostname without a protocol or path as `SHOPIFY_STORE_URL`, for example `whole-donuts.myshopify.com`. Store the Admin API token only in the Express service's secret manager.
 
-## 5. Enable a custom storefront if needed
-If sponsors or customers should browse outside the Shopify theme:
-1. Enable a custom storefront or headless channel in Shopify.
-2. Expose product data through the Admin API or Storefront API.
-3. Point your frontend to the backend product endpoints for synchronized catalog data.
+## Webhooks
 
-## 6. Connect Printful for POD fulfillment
-1. Create a Printful account and connect it to Shopify.
-2. Map Shopify products/variants to Printful templates.
-3. Save the Printful API key as `PRINTFUL_API_KEY`.
-4. Use the backend Shopify sync endpoints to mirror catalog and order activity into PostgreSQL.
+Configure these callback topics if the corresponding lifecycle updates are needed:
+
+```text
+orders/create
+orders/updated
+fulfillments/create
+fulfillments/update
+```
+
+Use the production API callback:
+
+```text
+https://<api-domain>/api/orders/webhook/shopify
+```
+
+Copy the app's webhook signing secret to `SHOPIFY_WEBHOOK_SECRET` in the API secret store and set `SHOPIFY_WEBHOOK_TOPICS` to the exact subscribed topics. The endpoint verifies the HMAC over Shopify's original request bytes, requires `X-Shopify-Webhook-Id`, records each delivery, and safely acknowledges duplicates. Do not place the callback behind a browser login, CDN body rewriting, or a generic rate limit that can drop Shopify retries.
+
+## Release check
+
+1. Deploy and migrate a staging API using its own store/app or safe test data.
+2. Confirm `GET /ready` succeeds and that an operator can call the Shopify status endpoint.
+3. Register the staging webhook, send a Shopify test event, and confirm one `integration_events` row reaches `processed`.
+4. Confirm a repeated delivery does not create a second order or reapply state.
+5. Replace the staging callback only after production secrets, DNS, TLS, and the database backup policy are in place.

@@ -1,15 +1,26 @@
 const { Pool } = require('pg');
-const dotenv = require('dotenv');
-
-dotenv.config();
+const { isProduction } = require('./environment');
 
 const connectionString = process.env.DATABASE_URL;
+
+function sslConfig() {
+  if (!isProduction) {
+    return false;
+  }
+
+  const rejectUnauthorized = process.env.DATABASE_SSL_REJECT_UNAUTHORIZED !== 'false';
+  const ca = process.env.DATABASE_SSL_CA?.replace(/\\n/g, '\n');
+  return ca ? { rejectUnauthorized, ca } : { rejectUnauthorized };
+}
 
 const pool = new Pool(
   connectionString
     ? {
         connectionString,
-        ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+        max: Number(process.env.DATABASE_POOL_MAX || 10),
+        idleTimeoutMillis: Number(process.env.DATABASE_IDLE_TIMEOUT_MS || 30000),
+        connectionTimeoutMillis: Number(process.env.DATABASE_CONNECT_TIMEOUT_MS || 5000),
+        ssl: sslConfig(),
       }
     : {
         host: process.env.DB_HOST || 'localhost',
@@ -17,7 +28,7 @@ const pool = new Pool(
         database: process.env.DB_NAME || 'wholedonuts_merch',
         user: process.env.DB_USER || 'postgres',
         password: process.env.DB_PASSWORD || '',
-        ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+        ssl: sslConfig(),
       }
 );
 

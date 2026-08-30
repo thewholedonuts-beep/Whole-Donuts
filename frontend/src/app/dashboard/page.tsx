@@ -38,13 +38,7 @@ export default function DashboardPage() {
   useEffect(() => {
     async function loadDashboard() {
       try {
-        const sponsorId = localStorage.getItem('wd-sponsor-id');
-        const token = localStorage.getItem('wd-token');
-        if (!sponsorId || !token) {
-          setError('Sign in required.');
-          return;
-        }
-        const response = await apiRequest<DashboardResponse>(`/sponsors/${sponsorId}/dashboard`, { token });
+        const response = await apiRequest<DashboardResponse>('/sponsors/me/dashboard');
         setData(response);
       } catch (loadError) {
         setError(loadError instanceof Error ? loadError.message : 'Unable to load dashboard.');

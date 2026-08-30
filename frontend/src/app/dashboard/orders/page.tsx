@@ -20,8 +20,7 @@ export default function OrdersPage() {
   useEffect(() => {
     async function loadOrders() {
       try {
-        const token = localStorage.getItem('wd-token');
-        const response = await apiRequest<{ orders: Order[] }>('/orders', { token: token || undefined });
+        const response = await apiRequest<{ orders: Order[] }>('/orders');
         setOrders(response.orders);
       } catch (loadError) {
         setError(loadError instanceof Error ? loadError.message : 'Unable to load orders.');
