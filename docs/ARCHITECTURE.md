@@ -2,12 +2,30 @@
 
 | Area | Purpose |
 |---|---|
+| `apps/landing/` | wenevergonnaclose.com gateway — stick figure homepage, "+U"/BEPZITIV animation, and dual-ecosystem split-screen routing. |
 | `apps/public-site/` | Static public site and GitHub Pages artifact, including `CNAME`, World, templates, Supabase migrations, and public auth/storefront configuration. |
 | `apps/merch/api/` | Express API for sponsor merchandise operations and integration webhooks. |
 | `apps/merch/web/` | Next.js merch dashboard. |
+| `backend/router/` | Domain-based routing engine — maps all 9 active domains to their respective services via `config/domains.yaml`. |
 | `data/postgres/migrations/` | Forward-only PostgreSQL migrations for the merch API. |
 | `infra/docker/` | Example service definitions and container build configuration. |
 | `tools/domain-funnels/` | Offline validation of inactive, sanitized configuration examples only. |
+
+## Ecosystem overview
+
+```
+wenevergonnaclose.com  (landing gateway)
+├── LEFT  — Whole Donuts ecosystem
+│   wholedonuts.{org,app,me,pro,buzz}  → service: wholedonuts
+│   wholedonuts.store                  → service: merch
+└── RIGHT — Nurtured Chef ecosystem
+    thenurturedchef.{com,foundation}   → service: nurturedchef
+    thenutur3dchef.com                 → service: merch
+```
+
+Domain → service mappings live in `backend/router/config/domains.yaml`.
+The landing `public/gateway.js` also contains a client-side fast-path redirect
+for the same 9 domains.
 
 ## Provenance
 
