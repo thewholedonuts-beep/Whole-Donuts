@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 300" fill="none">
+  <!-- Head -->
+  <circle cx="100" cy="40" r="24" stroke="#f0f0f0" stroke-width="4"/>
+  <!-- Eyes -->
+  <circle cx="91"  cy="37" r="3" fill="#f0f0f0"/>
+  <circle cx="109" cy="37" r="3" fill="#f0f0f0"/>
+  <!-- Smile -->
+  <path d="M91 48 Q100 56 109 48" stroke="#f0f0f0" stroke-width="3" stroke-linecap="round"/>
+  <!-- Body -->
+  <line x1="100" y1="64" x2="100" y2="170" stroke="#f0f0f0" stroke-width="4" stroke-linecap="round"/>
+  <!-- Left arm raised (wave) -->
+  <line x1="100" y1="100" x2="48"  y2="68"  stroke="#f0f0f0" stroke-width="4" stroke-linecap="round"/>
+  <line x1="48"  y1="68"  x2="30"  y2="44"  stroke="#f0f0f0" stroke-width="4" stroke-linecap="round"/>
+  <!-- Right arm -->
+  <line x1="100" y1="100" x2="148" y2="130" stroke="#f0f0f0" stroke-width="4" stroke-linecap="round"/>
+  <!-- Left leg -->
+  <line x1="100" y1="170" x2="68"  y2="250" stroke="#f0f0f0" stroke-width="4" stroke-linecap="round"/>
+  <!-- Right leg -->
+  <line x1="100" y1="170" x2="132" y2="250" stroke="#f0f0f0" stroke-width="4" stroke-linecap="round"/>
+  <!-- Left foot -->
+  <line x1="68"  y1="250" x2="48"  y2="262" stroke="#f0f0f0" stroke-width="4" stroke-linecap="round"/>
+  <!-- Right foot -->
+  <line x1="132" y1="250" x2="152" y2="262" stroke="#f0f0f0" stroke-width="4" stroke-linecap="round"/>
+</svg>
