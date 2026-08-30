@@ -48,3 +48,10 @@ Run the metric refresh from one provider scheduler, not from each API instance.
 ## Security boundary
 
 Browser sessions use HttpOnly, Secure production cookies; the API enforces CSRF validation for cookie-authenticated mutations. Sponsor access remains scoped to the authenticated sponsor. Operator-only routes require the separate `X-Operator-Key` credential, whose value must be stored in the provider secret manager and sent only by trusted operations tooling.
+
+Client-created dashboard orders are unverified records: their prices come from the
+server catalog and they cannot set provider order IDs, referral attribution,
+contribution, tier, or rewards. Sponsor registration always starts with zero
+contribution and the bronze defaults. Only an HMAC-verified Shopify
+`orders/create` or `orders/updated` webhook with `financial_status: paid` can
+create a referral conversion and contribution update.

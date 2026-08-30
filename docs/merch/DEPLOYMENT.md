@@ -39,6 +39,11 @@ The frontend API base URL is public and baked into the frontend build. Every oth
 
 Set `NODE_ENV=production`. Production startup fails when its required configuration is missing, insecure TLS is selected without explicit acknowledgement, origins are not HTTPS, or the Shopify store value is malformed.
 
+Migration `003_verified_payment_attribution.sql` resets historical contribution,
+tier, reward, and conversion counters because records created before the verified
+payment boundary have no immutable payment provenance. Only future HMAC-verified,
+paid Shopify order webhooks can restore financial attribution.
+
 ## Release procedure
 
 1. Create the private managed PostgreSQL instance with encryption, point-in-time recovery, and a dedicated least-privilege application role. Use a distinct migration role where the provider supports it.

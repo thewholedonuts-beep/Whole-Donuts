@@ -1,22 +1,12 @@
 const express = require('express');
 const { query, withTransaction } = require('../config/database');
 const { authenticateToken, requireAdmin } = require('../middleware/auth');
-const { applyTierDiscountCap } = require('../utils/effortScore');
+const { normalizeOrderItems } = require('../services/trustedOrder');
 const { allowedShopifyTopics, verifyShopifyWebhook } = require('../services/shopifyWebhook');
+const { isVerifiedPaidShopifyOrder } = require('../services/trustedOrder');
+const { recordVerifiedReferralConversion } = require('../services/referralRewards');
 
 const router = express.Router();
-
-function normalizeItems(items) {
-  if (!Array.isArray(items) || !items.length) {
-    throw new Error('At least one order item is required.');
-  }
-  return items.map((item) => ({
-    productId: item.productId,
-    quantity: Number(item.quantity) || 1,
-    unitPrice: Number(item.unitPrice || 0),
-    customization: item.customization || null,
-  }));
-}
 
 async function calculateTotals(items, discountApplied) {
   const productIds = [...new Set(items.map((item) => item.productId))];
@@ -29,7 +19,7 @@ async function calculateTotals(items, discountApplied) {
     if (!product) {
       throw new Error(`Product ${item.productId} not found.`);
     }
-    const unitPrice = item.unitPrice > 0 ? item.unitPrice : Number(product.final_price);
+    const unitPrice = Number(product.final_price);
     const lineTotal = unitPrice * item.quantity;
     subtotal += lineTotal;
     return {
@@ -48,23 +38,22 @@ async function calculateTotals(items, discountApplied) {
   };
 }
 
-async function refreshSponsorTier(sponsorId) {
-  const sponsorResult = await query('SELECT total_contribution FROM sponsors WHERE id = $1', [sponsorId]);
-  if (!sponsorResult.rowCount) return;
-  const tierState = applyTierDiscountCap(0, sponsorResult.rows[0].total_contribution);
-  await query(
-    `UPDATE sponsors
-     SET tier = $2,
-         customization_limit = $3,
-         updated_at = NOW()
-     WHERE id = $1`,
-    [sponsorId, tierState.tier, tierState.customizationLimit]
-  );
+async function applyVerifiedReferralAttribution(topic, payload, referralCode, total, integrationEventId) {
+  if (!referralCode || !isVerifiedPaidShopifyOrder(topic, payload)) {
+    return null;
+  }
+
+  return recordVerifiedReferralConversion({
+    code: referralCode,
+    orderId: String(payload.id),
+    total,
+    integrationEventId,
+  });
 }
 
 router.post('/', authenticateToken, async (req, res, next) => {
   try {
-    const { sponsorId, customerName, customerEmail, items, customizationData = {}, referralCodeUsed, shopifyOrderId, printfulOrderId } = req.body;
+    const { sponsorId, customerName, customerEmail, items, customizationData = {} } = req.body;
     if (!customerName || !customerEmail) {
       return res.status(400).json({ error: 'Customer name and email are required.' });
     }
@@ -73,7 +62,7 @@ router.post('/', authenticateToken, async (req, res, next) => {
       return res.status(403).json({ error: 'You do not have access to create orders for this sponsor.' });
     }
 
-    const normalizedItems = normalizeItems(items);
+    const normalizedItems = normalizeOrderItems(items);
     let discountApplied = 0;
 
     if (sponsorId) {
@@ -92,35 +81,21 @@ router.post('/', authenticateToken, async (req, res, next) => {
          RETURNING *`,
         [
           sponsorId || null,
-          shopifyOrderId || null,
-          printfulOrderId || null,
+          null,
+          null,
           customerName,
           customerEmail.toLowerCase(),
           JSON.stringify(totals.items),
           totals.subtotal,
           discountApplied,
           totals.total,
-          JSON.stringify(customizationData),
-          referralCodeUsed || null,
+          JSON.stringify({ ...customizationData, source: 'unverified-dashboard-order' }),
+          null,
         ]
       );
 
-      if (sponsorId) {
-        await client.query(
-          `UPDATE sponsors
-           SET total_contribution = total_contribution + $2,
-               updated_at = NOW()
-           WHERE id = $1`,
-          [sponsorId, totals.total]
-        );
-      }
-
       return insertResult.rows[0];
     });
-
-    if (sponsorId) {
-      await refreshSponsorTier(sponsorId);
-    }
 
     return res.status(201).json({ order });
   } catch (error) {
@@ -273,8 +248,22 @@ router.post('/webhook/shopify', async (req, res, next) => {
          RETURNING *`,
         [String(payload.id), payload.fulfillment_status || 'processing', payload.fulfillments?.[0]?.tracking_number || null]
       );
+      const total = Number(payload.total_price || payload.current_total_price || 0);
+      const attribution = await applyVerifiedReferralAttribution(
+        topic,
+        payload,
+        orderPayload.referralCodeUsed,
+        total,
+        eventId
+      );
+      const order = attribution
+        ? await query(
+            'UPDATE orders SET sponsor_id = $2, updated_at = NOW() WHERE id = $1 RETURNING *',
+            [update.rows[0].id, attribution.sponsorId]
+          )
+        : update;
       await query('UPDATE integration_events SET status = $2, processed_at = NOW() WHERE id = $1', [eventId, 'processed']);
-      return res.json({ order: update.rows[0], synced: true });
+      return res.json({ order: order.rows[0], synced: true });
     }
 
     const subtotal = Number(payload.subtotal_price || payload.current_subtotal_price || 0);
@@ -297,8 +286,21 @@ router.post('/webhook/shopify', async (req, res, next) => {
       ]
     );
 
+    const attribution = await applyVerifiedReferralAttribution(
+      topic,
+      payload,
+      orderPayload.referralCodeUsed,
+      total,
+      eventId
+    );
+    const order = attribution
+      ? await query(
+          'UPDATE orders SET sponsor_id = $2, updated_at = NOW() WHERE id = $1 RETURNING *',
+          [created.rows[0].id, attribution.sponsorId]
+        )
+      : created;
     await query('UPDATE integration_events SET status = $2, processed_at = NOW() WHERE id = $1', [eventId, 'processed']);
-    return res.status(201).json({ order: created.rows[0], synced: true });
+    return res.status(201).json({ order: order.rows[0], synced: true });
   } catch (error) {
     if (eventId) {
       await query(

@@ -4,7 +4,8 @@ function calculateEffortScore({ clicks = 0, shares = 0, conversions = 0, usageCo
   const numericConversions = Number(conversions) || 0;
   const numericUsage = Number(usageCount) || 0;
 
-  const preThresholdScore = numericClicks * 0.5 + numericShares * 1 + numericConversions * 5;
+  // Public engagement is analytics only; rewards require a verified paid conversion.
+  const preThresholdScore = numericConversions * 5;
   const postThresholdScore = numericConversions * 5;
   const rewardMultiplier = numericUsage >= 4 ? postThresholdScore : preThresholdScore;
   const discountEarned = Math.min(rewardMultiplier * 0.01, 0.3);

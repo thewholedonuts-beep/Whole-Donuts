@@ -6,6 +6,7 @@ const { authenticateToken, requireSponsorAccess } = require('../middleware/auth'
 const { generateUniqueReferralCode } = require('../utils/referralCode');
 const { calculateEffortScore, applyTierDiscountCap } = require('../utils/effortScore');
 const { clearSessionCookies, setSessionCookies } = require('../middleware/security');
+const { newSponsorFinancialDefaults } = require('../services/trustedOrder');
 
 const router = express.Router();
 
@@ -21,7 +22,7 @@ function sanitizeSponsor(row) {
 
 router.post('/register', async (req, res, next) => {
   try {
-    const { name, email, password, totalContribution = 0 } = req.body;
+    const { name, email, password } = req.body;
 
     if (!name || !isEmail(email) || !password || String(password).length < 8) {
       return res.status(400).json({ error: 'Name, valid email, and a password with at least 8 characters are required.' });
@@ -35,14 +36,22 @@ router.post('/register', async (req, res, next) => {
 
       const passwordHash = await bcrypt.hash(password, 12);
       const tempCode = await generateUniqueReferralCode(name.slice(0, 6));
-      const contribution = Number(totalContribution) || 0;
-      const tierState = applyTierDiscountCap(0, contribution);
+      const financialDefaults = newSponsorFinancialDefaults();
 
       const sponsorInsert = await client.query(
         `INSERT INTO sponsors (name, email, password_hash, referral_code, total_contribution, tier, customization_limit, discount_earned)
          VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
          RETURNING *`,
-        [name.trim(), email.toLowerCase(), passwordHash, tempCode, contribution, tierState.tier, tierState.customizationLimit, tierState.discountEarned]
+        [
+          name.trim(),
+          email.toLowerCase(),
+          passwordHash,
+          tempCode,
+          financialDefaults.totalContribution,
+          financialDefaults.tier,
+          financialDefaults.customizationLimit,
+          financialDefaults.discountEarned,
+        ]
       );
 
       await client.query(
@@ -177,7 +186,7 @@ async function getDashboard(req, res, next) {
       `SELECT
          COALESCE(SUM(CASE WHEN event_type = 'click' THEN 1 ELSE 0 END), 0) AS clicks,
          COALESCE(SUM(CASE WHEN event_type = 'share' THEN 1 ELSE 0 END), 0) AS shares,
-         COALESCE(SUM(CASE WHEN event_type = 'conversion' THEN 1 ELSE 0 END), 0) AS conversions,
+         COALESCE(SUM(CASE WHEN event_type = 'conversion' AND verified_payment THEN 1 ELSE 0 END), 0) AS conversions,
          COALESCE(MAX(rc.usage_count), 0) AS usage_count
        FROM referral_codes rc
        LEFT JOIN referral_events re ON rc.id = re.code_id

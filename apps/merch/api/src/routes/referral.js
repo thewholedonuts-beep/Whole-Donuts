@@ -2,56 +2,12 @@ const express = require('express');
 const { query } = require('../config/database');
 const { referralValidationLimiter } = require('../middleware/rateLimiter');
 const { hashIp, validateReferralCodeFormat } = require('../utils/referralCode');
-const { calculateEffortScore, applyTierDiscountCap } = require('../utils/effortScore');
 
 const router = express.Router();
 const botPattern = /(bot|crawl|spider|headless|curl|wget|python|axios)/i;
 
 function parseMetadata(value) {
   return value && typeof value === 'object' ? value : {};
-}
-
-async function updateSponsorPerformanceByCode(codeId) {
-  const metricsResult = await query(
-    `SELECT rc.sponsor_id,
-            COALESCE(MAX(rc.usage_count), 0) AS usage_count,
-            COALESCE(SUM(CASE WHEN re.event_type = 'click' THEN 1 ELSE 0 END), 0) AS clicks,
-            COALESCE(SUM(CASE WHEN re.event_type = 'share' THEN 1 ELSE 0 END), 0) AS shares,
-            COALESCE(SUM(CASE WHEN re.event_type = 'conversion' THEN 1 ELSE 0 END), 0) AS conversions,
-            COALESCE(MAX(s.total_contribution), 0) AS total_contribution
-     FROM referral_codes rc
-     JOIN sponsors s ON s.id = rc.sponsor_id
-     LEFT JOIN referral_events re ON re.code_id = rc.id
-     WHERE rc.id = $1
-     GROUP BY rc.sponsor_id`,
-    [codeId]
-  );
-
-  if (!metricsResult.rowCount) {
-    return null;
-  }
-
-  const metrics = metricsResult.rows[0];
-  const effort = calculateEffortScore(metrics);
-  const tierState = applyTierDiscountCap(effort.discountEarned, metrics.total_contribution);
-
-  await query(
-    `UPDATE sponsors
-     SET effort_score = $2,
-         discount_earned = $3,
-         tier = $4,
-         customization_limit = $5,
-         updated_at = NOW()
-     WHERE id = $1`,
-    [metrics.sponsor_id, effort.effortScore, tierState.discountEarned, tierState.tier, tierState.customizationLimit]
-  );
-
-  return {
-    ...metrics,
-    effortScore: effort.effortScore,
-    discountEarned: tierState.discountEarned,
-    tier: tierState.tier,
-  };
 }
 
 router.post('/validate', referralValidationLimiter, async (req, res, next) => {
@@ -200,11 +156,11 @@ router.post('/validate', referralValidationLimiter, async (req, res, next) => {
 
 router.post('/event', async (req, res, next) => {
   try {
-    const { code, eventType, referrer, orderId, metadata } = req.body;
+    const { code, eventType, referrer, metadata } = req.body;
     const userAgent = req.get('user-agent') || '';
     const ipHash = hashIp(req.ip);
 
-    if (!code || !['click', 'share', 'conversion', 'flagged'].includes(eventType)) {
+    if (!code || !['click', 'share'].includes(eventType)) {
       return res.status(400).json({ error: 'Valid code and eventType are required.' });
     }
 
@@ -216,12 +172,11 @@ router.post('/event', async (req, res, next) => {
     const referralCode = codeResult.rows[0];
     let fraudScore = 0;
     if (botPattern.test(userAgent)) fraudScore += 50;
-    if (eventType === 'conversion' && !orderId) fraudScore += 20;
 
     await query(
       `INSERT INTO referral_events (code_id, event_type, user_ip_hash, referrer, order_id, metadata, fraud_score)
        VALUES ($1, $2, $3, $4, $5, $6, $7)`,
-      [referralCode.id, eventType, ipHash, referrer || null, orderId || null, JSON.stringify(parseMetadata(metadata)), fraudScore]
+      [referralCode.id, eventType, ipHash, referrer || null, null, JSON.stringify(parseMetadata(metadata)), fraudScore]
     );
 
     const uniqueClickerResult = await query(
@@ -234,21 +189,16 @@ router.post('/event', async (req, res, next) => {
 
     await query(
       `UPDATE referral_codes
-       SET usage_count = CASE WHEN $2 = 'conversion' THEN usage_count + 1 ELSE usage_count END,
-           conversion_count = CASE WHEN $2 = 'conversion' THEN conversion_count + 1 ELSE conversion_count END,
-           unique_clickers = $3,
+       SET unique_clickers = $2,
            safety_flags = CASE WHEN $4 > 0 THEN safety_flags || jsonb_build_array('suspicious-activity') ELSE safety_flags END,
            updated_at = NOW()
        WHERE id = $1`,
-      [referralCode.id, eventType, uniqueClickerResult.rows[0].count, fraudScore]
+      [referralCode.id, uniqueClickerResult.rows[0].count, fraudScore]
     );
-
-    const performance = await updateSponsorPerformanceByCode(referralCode.id);
 
     return res.status(201).json({
       message: 'Referral event recorded.',
       fraudScore,
-      performance,
     });
   } catch (error) {
     return next(error);
@@ -274,7 +224,7 @@ router.get('/:code/stats', async (req, res, next) => {
       `SELECT
          COALESCE(SUM(CASE WHEN event_type = 'click' THEN 1 ELSE 0 END), 0) AS clicks,
          COALESCE(SUM(CASE WHEN event_type = 'share' THEN 1 ELSE 0 END), 0) AS shares,
-         COALESCE(SUM(CASE WHEN event_type = 'conversion' THEN 1 ELSE 0 END), 0) AS conversions,
+         COALESCE(SUM(CASE WHEN event_type = 'conversion' AND verified_payment THEN 1 ELSE 0 END), 0) AS conversions,
          COALESCE(AVG(fraud_score), 0) AS average_fraud_score
        FROM referral_events
        WHERE code_id = $1`,
@@ -292,7 +242,7 @@ router.get('/:code/stats', async (req, res, next) => {
       tier: codeResult.rows[0].tier,
       usageCount: codeResult.rows[0].usage_count,
       uniqueClickers: codeResult.rows[0].unique_clickers,
-      conversionCount: codeResult.rows[0].conversion_count,
+      conversionCount: Number(statsResult.rows[0].conversions),
       safetyFlags: codeResult.rows[0].safety_flags,
       analytics: {
         clicks: Number(statsResult.rows[0].clicks),

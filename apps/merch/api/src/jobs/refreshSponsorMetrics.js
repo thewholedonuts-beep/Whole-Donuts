@@ -8,7 +8,7 @@ async function refreshSponsorMetrics() {
             COALESCE(MAX(rc.usage_count), 0) AS usage_count,
             COALESCE(SUM(CASE WHEN re.event_type = 'click' THEN 1 ELSE 0 END), 0) AS clicks,
             COALESCE(SUM(CASE WHEN re.event_type = 'share' THEN 1 ELSE 0 END), 0) AS shares,
-            COALESCE(SUM(CASE WHEN re.event_type = 'conversion' THEN 1 ELSE 0 END), 0) AS conversions
+            COALESCE(SUM(CASE WHEN re.event_type = 'conversion' AND re.verified_payment THEN 1 ELSE 0 END), 0) AS conversions
      FROM sponsors s
      LEFT JOIN referral_codes rc ON rc.sponsor_id = s.id
      LEFT JOIN referral_events re ON re.code_id = rc.id
