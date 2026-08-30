@@ -6,7 +6,6 @@ const unlockState = document.getElementById("unlockState");
 const customizer = document.getElementById("customizer");
 const poseSelect = document.getElementById("poseSelect");
 const accentInput = document.getElementById("accentInput");
-const continueButton = document.getElementById("continueButton");
 const pageShell = document.querySelector(".page-shell");
 
 const storageKey = "whole-donuts-landing-state";
@@ -136,7 +135,6 @@ function applyState(state) {
     : "The first figure is waiting for you.";
   unlockState.classList.toggle("locked", !state.completed);
   pageShell.classList.toggle("completed", state.completed);
-  continueButton.hidden = !state.completed;
   renderCustomFigure(state);
 }
 
