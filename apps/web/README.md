@@ -10,7 +10,7 @@ experience.
 
 ## Local preview
 
-From `/home/runner/work/Whole-Donuts/Whole-Donuts`, run:
+From `apps/web/`, run:
 
 ```bash
 python3 -m http.server 4173

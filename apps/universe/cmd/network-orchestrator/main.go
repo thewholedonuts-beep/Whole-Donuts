@@ -87,6 +87,7 @@ func (nm *NetworkManager) DeployNetworkFunnel(ctx context.Context, networkName, 
 
 	var wg sync.WaitGroup
 	errorChan := make(chan error, len(network.Domains))
+	var mu sync.Mutex
 	successCount := 0
 
 	for _, domain := range network.Domains {
@@ -111,6 +112,9 @@ func (nm *NetworkManager) DeployNetworkFunnel(ctx context.Context, networkName, 
 				errorChan <- fmt.Errorf("failed to deploy to %s: %w", d, err)
 			} else {
 				fmt.Printf("   ✅ Deployed to %s\n", d)
+				mu.Lock()
+				successCount++
+				mu.Unlock()
 			}
 		}(domain)
 	}
@@ -119,15 +123,11 @@ func (nm *NetworkManager) DeployNetworkFunnel(ctx context.Context, networkName, 
 	close(errorChan)
 
 	for err := range errorChan {
-		if err != nil {
-			log.Printf("❌ %v", err)
-		} else {
-			successCount++
-		}
+		log.Printf("❌ %v", err)
 	}
 
 	network.Funnels = append(network.Funnels, funnelID)
-	fmt.Printf("✅ Funnel deployment complete (%d domains)\n", len(network.Domains))
+	fmt.Printf("✅ Funnel deployment complete (%d/%d domains)\n", successCount, len(network.Domains))
 	return nil
 }
 
