@@ -1,0 +1,101 @@
+name: Deploy to production (wenevergonnaclose.com)
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: production-deploy
+  cancel-in-progress: false
+
+jobs:
+  # ── Run all test suites before deploy ──────────────────────
+  test-merch:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        directory: [apps/merch/api, apps/merch/web]
+    defaults:
+      run:
+        working-directory: ${{ matrix.directory }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: ${{ matrix.directory }}/package-lock.json
+      - run: npm ci
+      - run: npm run check
+        env:
+          NEXT_PUBLIC_API_BASE_URL: https://api.wenevergonnaclose.com/api
+      - if: matrix.directory == 'apps/merch/api'
+        run: npm test
+
+  test-public-site:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: |
+          node --check apps/public-site/app.js
+          node --check apps/public-site/auth-config.js
+          node --check apps/public-site/auth.js
+          node --check apps/public-site/storefront-config.js
+          node --check apps/public-site/world/script.js
+
+  test-universe:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/universe
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+          cache-dependency-path: apps/universe/go.sum
+      - run: go build ./...
+      - run: go test ./...
+
+  test-domain-funnels:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: tools/domain-funnels
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.21'
+          cache-dependency-path: tools/domain-funnels/go.sum
+      - run: go test ./...
+
+  # ── Deploy public site to GitHub Pages ─────────────────────
+  deploy-pages:
+    needs: [test-merch, test-public-site, test-universe, test-domain-funnels]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: apps/public-site
+      - id: deployment
+        uses: actions/deploy-pages@v4
