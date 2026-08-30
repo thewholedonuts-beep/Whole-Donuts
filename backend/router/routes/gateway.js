@@ -12,5 +12,4 @@ const LANDING_DIR = path.join(__dirname, '..', '..', '..', 'apps', 'landing', 'p
 
 router.use(express.static(LANDING_DIR));
 
-
 module.exports = router;
