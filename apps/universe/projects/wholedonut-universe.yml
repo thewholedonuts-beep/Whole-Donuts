@@ -41,7 +41,7 @@ domain_registry:
     registrar: github-pages
     status: inactive
     purpose: Owner GitHub Pages site
-  - domain: thewholedonts-universe.github.io
+  - domain: thewholedonuts-universe.github.io
     registrar: github-pages
     status: inactive
     purpose: Repository GitHub Pages site

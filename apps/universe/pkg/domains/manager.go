@@ -95,6 +95,11 @@ func (m *Manager) CreateFunnel(ctx context.Context, funnelID, funnelName, domain
 		return nil, fmt.Errorf("domain %s not registered in manager", domain)
 	}
 
+	emailProvider, ok := config["emailProvider"].(string)
+	if !ok {
+		return nil, fmt.Errorf("config missing required string field emailProvider")
+	}
+
 	funnel := &Funnel{
 		ID:            funnelID,
 		Name:          funnelName,
@@ -103,7 +108,7 @@ func (m *Manager) CreateFunnel(ctx context.Context, funnelID, funnelName, domain
 		Checkout:      "checkout-" + funnelID,
 		ThankYouPage:  "thankyou-" + funnelID,
 		IPAddress:     ipAddress,
-		EmailProvider: config["emailProvider"].(string),
+		EmailProvider: emailProvider,
 		Status:        "testing",
 		Config:        config,
 	}
@@ -127,12 +132,12 @@ func (m *Manager) CreateFunnel(ctx context.Context, funnelID, funnelName, domain
 		},
 	}
 
-	for _, step := range steps {
+	for i, step := range steps {
 		recordID, err := m.createDNSRecord(ctx, domain, step.Subdomain, "A", step.TargetIP)
 		if err != nil {
 			return nil, fmt.Errorf("failed to create DNS record for %s: %w", step.Subdomain, err)
 		}
-		step.RecordID = recordID
+		steps[i].RecordID = recordID
 		fmt.Printf("✓ Created DNS record: %s.%s -> %s (ID: %s)\n", step.Subdomain, domain, step.TargetIP, recordID)
 	}
 

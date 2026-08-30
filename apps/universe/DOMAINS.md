@@ -74,7 +74,7 @@ Centralized management system for all WholeDonut domains and subdomains.
 - **DNS Provider:** GitHub Pages
 - **Last Updated:** 2026-08-28
 
-### thewholedonts-universe.github.io
+### thewholedonuts-universe.github.io
 - **Status:** Inactive
 - **Registrar:** GitHub Pages
 - **Purpose:** Repository GitHub Pages site
@@ -94,7 +94,7 @@ Centralized management system for all WholeDonut domains and subdomains.
 | thenurturedchef | .foundation | Inactive | Porkbun | Foundation Domain | None |
 | thenutur3dchef | .com | Active | Porkbun | Content Funnel | Multiple |
 | thewholedonuts-beep | .github.io | Inactive | GitHub Pages | Owner Site | None |
-| thewholedonts-universe | .github.io | Inactive | GitHub Pages | Repository Site | None |
+| thewholedonuts-universe | .github.io | Inactive | GitHub Pages | Repository Site | None |
 
 ## Subdomain Structure
 

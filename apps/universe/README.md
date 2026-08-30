@@ -14,3 +14,5 @@ under `apps/universe/`.
 - `thenurturedchef.com`
 - `thenurturedchef.foundation`
 - `thenutur3dchef.com`
+- `thewholedonuts-beep.github.io`
+- `thewholedonuts-universe.github.io`

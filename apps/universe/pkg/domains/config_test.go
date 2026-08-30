@@ -45,7 +45,7 @@ func TestDomainInventoryDocumentsRequestedDomains(t *testing.T) {
 		"thenurturedchef.foundation",
 		"thenutur3dchef.com",
 		"thewholedonuts-beep.github.io",
-		"thewholedonts-universe.github.io",
+		"thewholedonuts-universe.github.io",
 	}
 
 	inventoryFiles := []string{

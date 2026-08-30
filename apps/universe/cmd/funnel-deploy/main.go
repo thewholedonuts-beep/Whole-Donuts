@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"path/filepath"
 
 	"github.com/thewholedonuts-beep/wholedonuts-universe/pkg/domains"
 	"gopkg.in/yaml.v2"
@@ -98,7 +97,7 @@ func deployFunnels(ctx context.Context, manager *domains.Manager, configFile str
 		return fmt.Errorf("failed to parse YAML: %w", err)
 	}
 
-	fmt.Println("\n🚀 Starting funnel deployment...\n")
+	fmt.Println("\n🚀 Starting funnel deployment...")
 
 	// Add domains
 	fmt.Println("📍 Registering domains:")

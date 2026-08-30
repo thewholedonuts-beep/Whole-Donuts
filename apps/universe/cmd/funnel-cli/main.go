@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 
 	"github.com/thewholedonuts-beep/wholedonuts-universe/pkg/domains"
 )
@@ -136,5 +137,5 @@ func parseFullDomain(domain string) []string {
 }
 
 func contains(s, substr string) bool {
-	return len(s) > 0 && len(substr) > 0 && (s == substr || (len(s) > len(substr) && s[:len(substr)] == substr))
+	return strings.Contains(s, substr)
 }
