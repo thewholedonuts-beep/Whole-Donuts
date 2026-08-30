@@ -1,0 +1,32 @@
+name: Validate universe tools
+
+on:
+  pull_request:
+    paths:
+      - 'apps/universe/**'
+      - '.github/workflows/universe.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'apps/universe/**'
+      - '.github/workflows/universe.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  universe:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/universe
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+          cache-dependency-path: apps/universe/go.sum
+      - run: go build ./...
+      - run: go test ./...
+      - run: go vet ./...
