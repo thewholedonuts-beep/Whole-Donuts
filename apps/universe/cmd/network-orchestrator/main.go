@@ -106,8 +106,8 @@ func (nm *NetworkManager) DeployNetworkFunnel(ctx context.Context, networkName, 
 				"emailProvider": "sendgrid",
 			}
 
-			funnelName := fmt.Sprintf("%s-%s", funnelID, d)
-			_, err := nm.manager.CreateFunnel(ctx, funnelName, funnelName, d, serverIP, funnelConfig)
+			domainFunnelID := fmt.Sprintf("%s-%s", funnelID, d)
+			_, err := nm.manager.CreateFunnel(ctx, domainFunnelID, funnelName, d, serverIP, funnelConfig)
 			if err != nil {
 				errorChan <- fmt.Errorf("failed to deploy to %s: %w", d, err)
 			} else {

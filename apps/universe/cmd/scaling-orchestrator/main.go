@@ -86,10 +86,10 @@ func (so *ScalingOrchestrator) ExecuteScaling(ctx context.Context, strategyName 
 			wg.Add(1)
 
 			go func(d string, fn int, di int, serverIP string) {
-			defer wg.Done()
+				defer wg.Done()
 
-			funnelID := fmt.Sprintf("scale-funnel-%d-%d", di, fn)
-			funnelName := fmt.Sprintf("Scaled Funnel %d - %s", fn, d)
+				funnelID := fmt.Sprintf("scale-funnel-%d-%d", di, fn)
+				funnelName := fmt.Sprintf("Scaled Funnel %d - %s", fn, d)
 
 				config := map[string]interface{}{
 					"scalingID":      strategyName,
