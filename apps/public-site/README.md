@@ -1,6 +1,6 @@
 # +U — unified web entry
 
-This repository is the public deployment root for **wenevergonnaclose.com**.
+This directory is the GitHub Pages artifact for **wenevergonnaclose.com**.
 
 ## Experience map
 
@@ -22,34 +22,8 @@ The persistent side rail keeps TNC and AWD available throughout the entry experi
 
 `storefront-config.js` is public, contains no credentials, and ships with an empty `storefrontUrl`. Keep it empty until the separate Shopify + Printful storefront is deployed and verified. Then set it to that storefront's full `https://` URL. The page validates the URL before adding the external **Shop Made by +U, 4 ALL** link; empty, malformed, `http`, or credential-bearing URLs leave the Goods Window browse-only.
 
-## Repository responsibilities
-
-- `WHNutz` (this public repository): root static site and GitHub Pages deployment.
-- `beep/`: preserved funnel definitions, orchestration code, and operational documentation. It is internal tooling, not a public web server.
-
 ## GitHub Pages
 
-Publish from the `main` branch repository root after merging this change. The `CNAME` file binds the site to `wenevergonnaclose.com`.
-
-## Porkbun DNS
-
-Use these records for the root deployment:
-
-| Type | Host | Answer | TTL |
-|---|---|---|---|
-| A | @ | 185.199.108.153 | 600 |
-| A | @ | 185.199.109.153 | 600 |
-| A | @ | 185.199.110.153 | 600 |
-| A | @ | 185.199.111.153 | 600 |
-| CNAME | www | thewholedonuts-beep.github.io | 600 |
-
-No additional brand-domain DNS records are required for the public experience: the branches use `#tnc` and `#awd` routes on the primary domain, which avoids extra certificates and fragmented deployments.
-
-Configure the other domains as URL forwards in Porkbun, preserving any path and query string:
-
-| Source | Forward to |
-|---|---|
-| `wholedonuts.org`, `wholedonuts.app`, `wholedonuts.buzz` | `https://wenevergonnaclose.com/#awd` |
-| `thenurturedchef.com`, `thenurturedchef.foundation`, `thenutur3dchef.com` | `https://wenevergonnaclose.com/#tnc` |
-
-Do not deploy the `192.168.1.x` addresses in the private funnel configuration to public DNS; those are private placeholder addresses.
+The repository workflow uploads this directory after a `main`-branch change. Its
+`CNAME` file is intentionally inside the artifact. Enable GitHub Pages and complete
+the custom-domain cutover only after reviewing [the external setup guide](../../docs/CUTOVER.md).

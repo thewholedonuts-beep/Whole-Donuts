@@ -1,0 +1,14 @@
+# Public example only. This repository cannot register domains, modify DNS, or deploy funnels.
+domains:
+  - name: example
+    tld: invalid
+    status: inactive
+    funnels:
+      - sample-funnel
+
+funnels:
+  sample-funnel:
+    name: Sample Funnel
+    domain: example.invalid
+    status: inactive
+    purpose: configuration validation only
