@@ -42,12 +42,24 @@
     }
   });
 
+  /* ── Ecosystem destination map (no DOM-sourced URLs) ── */
+
+  var ECOSYSTEM_DEST = {
+    'ecosystem-side--donuts': 'https://wholedonuts.org',
+    'ecosystem-side--chef':   'https://thenurturedchef.com'
+  };
+
   phaseSplit.querySelectorAll('.ecosystem-side').forEach(function (side) {
-    var href = side.getAttribute('data-href');
+    var dest = null;
+    Object.keys(ECOSYSTEM_DEST).forEach(function (cls) {
+      if (side.classList.contains(cls)) {
+        dest = ECOSYSTEM_DEST[cls];
+      }
+    });
 
     function navigate() {
-      if (href) {
-        window.location.href = href;
+      if (dest) {
+        window.location.assign(dest);
       }
     }
 

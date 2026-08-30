@@ -12,11 +12,12 @@
 const gatewayRouter    = require('../routes/gateway');
 const wholeDonutsRouter = require('../routes/wholedonuts');
 const nurturedChefRouter = require('../routes/nurturedchef');
+const merchRouter       = require('../routes/merch');
 
 const SERVICE_MAP = {
   landing:      gatewayRouter,
   wholedonuts:  wholeDonutsRouter,
-  merch:        wholeDonutsRouter,   // merch shares the wholedonuts router by default
+  merch:        merchRouter,
   nurturedchef: nurturedChefRouter
 };
 
