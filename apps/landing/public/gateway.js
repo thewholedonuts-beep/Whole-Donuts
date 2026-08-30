@@ -46,9 +46,12 @@
     var href = side.getAttribute('data-href');
 
     function navigate() {
-      if (href && /^https?:\/\//.test(href)) {
-        window.location.href = href;
-      }
+      try {
+        var url = new URL(href);
+        if (url.protocol === 'https:' || url.protocol === 'http:') {
+          window.location.href = url.href;
+        }
+      } catch (e) { /* invalid URL — do nothing */ }
     }
 
     side.addEventListener('click', navigate);
