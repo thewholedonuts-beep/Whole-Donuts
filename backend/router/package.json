@@ -4,7 +4,7 @@
   "description": "Domain-based routing engine for the Whole Donuts + Nurtured Chef ecosystem",
   "main": "domain-config.js",
   "scripts": {
-    "check": "node --check domain-config.js middleware/domainDetector.js middleware/routeSelector.js routes/gateway.js routes/wholedonuts.js routes/nurturedchef.js",
+    "check": "node --check domain-config.js middleware/domainDetector.js middleware/routeSelector.js routes/gateway.js routes/wholedonuts.js routes/nurturedchef.js routes/merch.js",
     "test": "node --test test/*.test.js"
   },
   "dependencies": {
