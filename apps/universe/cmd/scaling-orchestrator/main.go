@@ -85,11 +85,11 @@ func (so *ScalingOrchestrator) ExecuteScaling(ctx context.Context, strategyName 
 		for funnelNum := 1; funnelNum <= strategy.FunnelsPerDomain; funnelNum++ {
 			wg.Add(1)
 
-			go func(d string, fn int, serverIP string) {
-				defer wg.Done()
+			go func(d string, fn int, di int, serverIP string) {
+			defer wg.Done()
 
-				funnelID := fmt.Sprintf("scale-funnel-%d-%d", domainIdx, fn)
-				funnelName := fmt.Sprintf("Scaled Funnel %d - %s", fn, d)
+			funnelID := fmt.Sprintf("scale-funnel-%d-%d", di, fn)
+			funnelName := fmt.Sprintf("Scaled Funnel %d - %s", fn, d)
 
 				config := map[string]interface{}{
 					"scalingID":      strategyName,
@@ -106,7 +106,7 @@ func (so *ScalingOrchestrator) ExecuteScaling(ctx context.Context, strategyName 
 					mu.Unlock()
 					fmt.Printf("   ✅ Deployed %s\n", funnelID)
 				}
-			}(domain, funnelNum, strategy.ServerIPs[funnelNum%len(strategy.ServerIPs)])
+			}(domain, funnelNum, domainIdx, strategy.ServerIPs[funnelNum%len(strategy.ServerIPs)])
 		}
 	}
 
