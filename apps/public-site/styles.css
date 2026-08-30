@@ -516,7 +516,7 @@ footer a{color:var(--ink);font-weight:900}
   .rail nav a{padding:.7rem .5rem}
   .panel{padding:6rem 1.2rem 5rem}
   .world-entry{padding:1rem}
-  .world-frame{min-height:720px;height:82vh;border-radius:1rem}
+  .world-frame{min-height:400px;height:65vh;border-radius:1rem}
   .course-tabs{grid-template-columns:repeat(2,1fr)}
   .course-grid,
   .product-grid,
