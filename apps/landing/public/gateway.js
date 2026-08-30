@@ -46,7 +46,7 @@
     var href = side.getAttribute('data-href');
 
     function navigate() {
-      if (href) {
+      if (href && /^https?:\/\//.test(href)) {
         window.location.href = href;
       }
     }

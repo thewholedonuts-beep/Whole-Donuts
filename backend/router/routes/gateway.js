@@ -12,8 +12,4 @@ const LANDING_DIR = path.join(__dirname, '..', '..', '..', 'apps', 'landing', 'p
 
 router.use(express.static(LANDING_DIR));
 
-router.get('/', function (req, res) {
-  res.sendFile(path.join(LANDING_DIR, 'index.html'));
-});
-
 module.exports = router;
