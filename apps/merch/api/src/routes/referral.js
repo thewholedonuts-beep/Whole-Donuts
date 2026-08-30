@@ -2,12 +2,38 @@ const express = require('express');
 const { query } = require('../config/database');
 const { referralValidationLimiter } = require('../middleware/rateLimiter');
 const { hashIp, validateReferralCodeFormat } = require('../utils/referralCode');
+const { calculateEffortScore } = require('../utils/effortScore');
 
 const router = express.Router();
 const botPattern = /(bot|crawl|spider|headless|curl|wget|python|axios)/i;
 
 function parseMetadata(value) {
   return value && typeof value === 'object' ? value : {};
+}
+
+function buildStatsResponse(referralCode, stats) {
+  const effort = calculateEffortScore({
+    ...stats,
+    usageCount: referralCode.usage_count,
+  });
+
+  return {
+    code: referralCode.code_string,
+    sponsor: referralCode.sponsor_name,
+    tier: referralCode.tier,
+    usageCount: referralCode.usage_count,
+    uniqueClickers: referralCode.unique_clickers,
+    conversionCount: Number(stats.conversions),
+    safetyFlags: referralCode.safety_flags,
+    analytics: {
+      clicks: Number(stats.clicks),
+      shares: Number(stats.shares),
+      conversions: Number(stats.conversions),
+      averageFraudScore: Number(stats.average_fraud_score),
+      effortScore: effort.effortScore,
+      discountEarned: referralCode.discount_earned,
+    },
+  };
 }
 
 router.post('/validate', referralValidationLimiter, async (req, res, next) => {
@@ -231,31 +257,12 @@ router.get('/:code/stats', async (req, res, next) => {
       [codeResult.rows[0].id]
     );
 
-    const effort = calculateEffortScore({
-      ...statsResult.rows[0],
-      usageCount: codeResult.rows[0].usage_count,
-    });
-
-    return res.json({
-      code: codeResult.rows[0].code_string,
-      sponsor: codeResult.rows[0].sponsor_name,
-      tier: codeResult.rows[0].tier,
-      usageCount: codeResult.rows[0].usage_count,
-      uniqueClickers: codeResult.rows[0].unique_clickers,
-      conversionCount: Number(statsResult.rows[0].conversions),
-      safetyFlags: codeResult.rows[0].safety_flags,
-      analytics: {
-        clicks: Number(statsResult.rows[0].clicks),
-        shares: Number(statsResult.rows[0].shares),
-        conversions: Number(statsResult.rows[0].conversions),
-        averageFraudScore: Number(statsResult.rows[0].average_fraud_score),
-        effortScore: effort.effortScore,
-        discountEarned: codeResult.rows[0].discount_earned,
-      },
-    });
+    return res.json(buildStatsResponse(codeResult.rows[0], statsResult.rows[0]));
   } catch (error) {
     return next(error);
   }
 });
+
+router.buildStatsResponse = buildStatsResponse;
 
 module.exports = router;
