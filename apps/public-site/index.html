@@ -3,22 +3,22 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="description" content="+U Movement — walk into the community table, choose your next step, and carry the brochure companion with you.">
-  <title>+U Movement | Three Questions, One Community Table</title>
-  <link rel="stylesheet" href="styles.css?v=movement4">
+  <meta name="description" content="Whole Donuts — walk into the field, answer three questions, and find your seat at the table or the counter.">
+  <title>Whole Donuts | Walk In</title>
+  <link rel="stylesheet" href="styles.css?v=entry1">
 </head>
 <body>
   <section class="world-entry" aria-labelledby="world-entry-title">
     <div class="world-entry-copy">
-      <p class="eyebrow">WHOLE DONUTS PRESENTS</p>
+      <p class="eyebrow">WHOLE DONUTS</p>
       <h1 id="world-entry-title">Walk into the field.</h1>
-      <p>Start where you are. Give your next creation a name, choose your figure, and step into the +U world before entering the community table.</p>
+      <p>Choose your figure, step into the world, then answer three questions to find your seat.</p>
     </div>
     <iframe class="world-frame" src="world/" title="Whole Donuts interactive stick-figure world"></iframe>
   </section>
 
-  <aside class="rail" aria-label="+U menu">
-    <a class="mark" href="#template-library" aria-label="Open the +U template library">+U</a>
+  <aside class="rail" aria-label="Whole Donuts menu">
+    <a class="mark" href="#home" aria-label="Home">+U</a>
     <nav>
       <a href="https://wenevergonnaclose.com" aria-label="Gateway — wenevergonnaclose.com"><span>↩</span><small>Gateway</small></a>
       <a href="#awd" data-branch="awd"><span>WHOLE</span><small>Whole Donuts</small></a>
@@ -28,131 +28,29 @@
 
   <main>
     <section id="home" class="panel hero" aria-labelledby="home-title">
-      <p class="eyebrow">THE COMMUNITY COUNTER · <span id="daily-date">TODAY</span></p>
+      <p class="eyebrow">THE COMMUNITY TABLE · <span id="daily-date">TODAY</span></p>
       <h1 id="home-title">Pull up a seat.</h1>
-      <p class="lede">Welcome in. Today’s menu is made by community: no judgment—just try, learn, and leave a crumb for the next person.</p>
-
-      <section class="welcome-scene" aria-label="Stick figures welcoming you">
-        <div class="stick-group" aria-hidden="true">
-          <div class="stick happy"><span class="head"></span><span class="body"></span><span class="arm left"></span><span class="arm right"></span><span class="leg left"></span><span class="leg right"></span></div>
-          <div class="stick wave"><span class="head"></span><span class="body"></span><span class="arm left"></span><span class="arm right"></span><span class="leg left"></span><span class="leg right"></span></div>
-          <div class="stick happy"><span class="head"></span><span class="body"></span><span class="arm left"></span><span class="arm right"></span><span class="leg left"></span><span class="leg right"></span></div>
-        </div>
-        <p class="welcome-note">Hey you. The water is warm, the table is open, and there is room for your next step.</p>
-      </section>
-
-      <section class="template-library" id="template-library" aria-labelledby="template-library-title">
-        <p class="eyebrow">THE +U LIBRARY</p>
-        <h2 id="template-library-title">Make it yours, one small edit at a time.</h2>
-        <p id="template-library-copy">Pick a guide, make a copy, and shape it around what is true for you today. The library grows as the community leaves useful crumbs.</p>
-        <div class="template-grid">
-          <article class="template-card">
-            <span>01</span>
-            <h3>Find your next step</h3>
-            <p>A gentle page for turning a need, idea, or hard moment into one doable action.</p>
-            <a href="templates/plus-u-next-step-template.md">Open the template</a>
-          </article>
-          <article class="template-card">
-            <span>02</span>
-            <h3>Share what helped</h3>
-            <p>Turn one lesson, connection, or resource into something the next person can use.</p>
-            <a href="templates/plus-u-share-a-crumb-template.md">Open the template</a>
-          </article>
-          <article class="template-card">
-            <span>03</span>
-            <h3>Build your table</h3>
-            <p>Gather a small circle around a cause, a project, or a practical act of care.</p>
-            <a href="templates/plus-u-build-your-table-template.md">Open the template</a>
-          </article>
-        </div>
-        <p><a class="library-guide-link" href="WHOLE_DONUTS_GUIDE.md">Read the whole Whole Donuts guide</a></p>
-        <p class="template-library-note">Bring any useful crumb, no matter where you gathered it. Choose what fits, skip what does not, and rewrite every prompt in your own words. No account is needed to use a template.</p>
-        <section class="crumb-workshop" aria-labelledby="crumb-workshop-title">
-          <p class="eyebrow">THE CRUMB WORKSHOP</p>
-          <h3 id="crumb-workshop-title">Leave something useful for the next person.</h3>
-          <p>Share an original lesson, a resource you have permission to recommend, or a source worth reviewing. Every crumb is reviewed before it is added to the public experience.</p>
-          <form id="crumb-form">
-            <label for="crumb-category">Where could it help?</label>
-            <select id="crumb-category" name="category" required>
-              <option value="">Choose a place</option>
-              <option value="world">Whole Donuts world</option>
-              <option value="library">+U Library</option>
-              <option value="ambassador">Ambassador Path</option>
-              <option value="support">Community support</option>
-            </select>
-            <label for="crumb-source">Source link, if there is one</label>
-            <input id="crumb-source" name="source" type="url" placeholder="https://example.com">
-            <label for="crumb-content">Your crumb</label>
-            <textarea id="crumb-content" name="content" rows="5" maxlength="2000" required placeholder="What is useful, who could it help, and how should someone begin?"></textarea>
-            <label class="crumb-consent"><input id="crumb-rights" name="rights" type="checkbox" required> I wrote this or have permission to share and recommend it.</label>
-            <button type="submit">Send this crumb for review</button>
-          </form>
-          <p id="crumb-status" aria-live="polite"></p>
-          <p class="crumb-note">We do not publish private, identifying, financial, health, or harmful information. Read the <a href="CRUMB_PROTOCOL.md">crumb protocol</a>.</p>
-        </section>
-      </section>
-
-      <section class="ambassador-path" aria-labelledby="ambassador-path-title">
-        <p class="eyebrow">THE +U AMBASSADOR PATH</p>
-        <h2 id="ambassador-path-title">Your resilience is a credential.</h2>
-        <p>Artists, tradespeople, organizers, business leaders, neighbors rebuilding after hard times, and people still finding their footing all bring knowledge worth carrying forward. +U recognizes what you have learned and gives you a place to grow it, share it, or take it wherever your own path leads.</p>
-        <div class="ambassador-grid">
-          <article>
-            <h3>Learn your way</h3>
-            <p>Use guides, templates, and shared practical knowledge at your own pace. Keep what helps and leave the rest.</p>
-          </article>
-          <article>
-            <h3>Earn your invitation</h3>
-            <p>When you complete a recognized level or receive a Dedication Award, your private QR opens your member path and records the achievement to your verified account.</p>
-          </article>
-          <article>
-            <h3>Lead from where you stand</h3>
-            <p>Choose a creative, skilled-trade, community, or business ambassador path. Build with the table or use what you learn independently.</p>
-          </article>
-        </div>
-        <p class="ambassador-note">Everything is here if you ask, try, and finish what you started. Take what helps, create the next project of positivity, and leave a useful crumb for the person who comes after you. No one has to prove their worth to belong here. Certification recognizes a completed path; it does not measure a person's value.</p>
-      </section>
-
-      <section class="award-signin" id="award-signin" hidden aria-labelledby="award-signin-title">
-        <p class="eyebrow">DEDICATION AWARD</p>
-        <h2 id="award-signin-title">Your place is saved.</h2>
-        <p id="award-signin-copy">Enter your email to receive a private sign-in link and continue where you left off.</p>
-        <form id="award-signin-form">
-          <label for="award-email">Email address</label>
-          <div class="award-signin-actions">
-            <input id="award-email" name="email" type="email" autocomplete="email" required>
-            <button type="submit">Send my sign-in link</button>
-          </div>
-        </form>
-        <p id="award-signin-status" aria-live="polite"></p>
-      </section>
-
-      <section class="member-greeting" id="member-greeting" hidden aria-live="polite">
-        <strong id="member-greeting-title">Welcome back.</strong>
-        <span id="member-greeting-copy">Your place at the table is here when you are ready.</span>
-      </section>
+      <p class="lede">No judgment. No entrance fee. Just three questions, then your seat is ready.</p>
 
       <section class="welcome-gate" id="welcome-gate" aria-labelledby="welcome-title">
         <p class="eyebrow" id="welcome-progress">Question 1 of 3</p>
         <h2 id="welcome-title">Three questions. Then your seat is ready.</h2>
-        <div class="welcome-step" data-question="1" data-key="branch">
-          <p>What sounds good right now?</p>
-          <div class="answer-grid">
-            <button type="button" data-answer="awd">Whole Donuts</button>
-            <button type="button" data-answer="tnc">The Nurtured Chef</button>
-            <button type="button" data-answer="both">Surprise me with +U</button>
+
+        <div class="welcome-step" data-question="1" data-key="age">
+          <p>How are you coming in today?</p>
+          <div class="answer-grid answer-grid--two">
+            <button type="button" data-answer="adult" data-dest="awd">
+              <span class="stick-inline happy" aria-hidden="true"></span>
+              I&rsquo;m an adult &mdash; take me to the Counter
+            </button>
+            <button type="button" data-answer="kid" data-dest="tnc">
+              <span class="stick-inline wave" aria-hidden="true"></span>
+              I&rsquo;m a kid &mdash; take me to the Table
+            </button>
           </div>
         </div>
-        <div class="welcome-step" data-question="2" data-key="course" hidden>
-          <p>How hungry are you?</p>
-          <div class="answer-grid">
-            <button type="button" data-answer="bits">Just a bit</button>
-            <button type="button" data-answer="bites">Give me a plate</button>
-            <button type="button" data-answer="biggies">Bring the bib</button>
-            <button type="button" data-answer="bombs">Dessert first</button>
-          </div>
-        </div>
-        <div class="welcome-step" data-question="3" data-key="intent" hidden>
+
+        <div class="welcome-step" data-question="2" data-key="feel" hidden>
           <p>What would feel good today?</p>
           <div class="answer-grid">
             <button type="button" data-answer="learn">Learn something</button>
@@ -161,210 +59,48 @@
             <button type="button" data-answer="wander">Just wander</button>
           </div>
         </div>
+
+        <div class="welcome-step" data-question="3" data-key="size" hidden>
+          <p>How big of a bite?</p>
+          <div class="answer-grid">
+            <button type="button" data-answer="bits">Just a bit</button>
+            <button type="button" data-answer="bites">Give me a plate</button>
+            <button type="button" data-answer="biggies">Bring the bib</button>
+            <button type="button" data-answer="bombs">Dessert first</button>
+          </div>
+        </div>
+
         <div class="welcome-result" id="welcome-result" aria-live="polite" hidden>
-          <strong>Your seat is ready.</strong>
-          <span>Welcome to +U.</span>
-          <button type="button" id="restart-welcome">Ask me again</button>
-        </div>
-      </section>
-
-      <div class="counter" id="community-counter" aria-label="Today's community menu" hidden>
-        <div class="counter-head">
-          <div><p class="eyebrow">BEFORE THE FIRST CRUMB DROPS</p><h2>+U changes everything.</h2></div>
-          <p>Tap a course. Order only what fits.</p>
-        </div>
-
-        <div class="course-tabs" role="tablist" aria-label="Menu courses">
-          <button type="button" id="course-tab-bits" data-menu="bits" role="tab" aria-controls="course-bits" aria-selected="true">BITS</button>
-          <button type="button" id="course-tab-bites" data-menu="bites" role="tab" aria-controls="course-bites" aria-selected="false">BITES</button>
-          <button type="button" id="course-tab-biggies" data-menu="biggies" role="tab" aria-controls="course-biggies" aria-selected="false">BIGGIES</button>
-          <button type="button" id="course-tab-bombs" data-menu="bombs" role="tab" aria-controls="course-bombs" aria-selected="false">BOMBS</button>
-        </div>
-
-        <section class="course" id="course-bits" data-course="bits" role="tabpanel" aria-labelledby="course-tab-bits">
-          <h3>Bits <small>· tapas &amp; small plates</small></h3>
-          <div class="course-grid">
-            <article class="dish"><strong>Say hello</strong><p>Walk in without a name, title, résumé, or explanation.</p></article>
-            <article class="dish"><strong>Try one thing</strong><p>Explore one idea, skill, tool, or cause without judgment.</p></article>
-            <article class="dish"><strong>Leave one crumb</strong><p>Share one useful lesson so the next guest starts farther ahead.</p></article>
+          <strong id="welcome-result-title">Your seat is ready.</strong>
+          <span id="welcome-result-copy">Welcome to +U.</span>
+          <div class="welcome-result-actions">
+            <a id="welcome-go" class="button primary" href="#awd">Go to your seat ↓</a>
+            <button type="button" id="restart-welcome">Ask me again</button>
           </div>
-        </section>
-
-        <section class="course" id="course-bites" data-course="bites" role="tabpanel" aria-labelledby="course-tab-bites" hidden>
-          <h3>Bites <small>· you may need a plate</small></h3>
-          <div class="course-grid">
-            <article class="dish"><strong>Learn together</strong><p>Community-made information, experiments, and practical guidance.</p></article>
-            <article class="dish"><strong>Make together</strong><p>Small services and projects people already need, made more human.</p></article>
-            <article class="dish"><strong>Serve a cause</strong><p>Turn a useful action into a repeatable effect for someone else.</p></article>
-          </div>
-        </section>
-
-        <section class="course" id="course-biggies" data-course="biggies" role="tabpanel" aria-labelledby="course-tab-biggies" hidden>
-          <h3>Biggies <small>· you may need a bib</small></h3>
-          <div class="course-grid">
-            <article class="dish"><strong>Build an appetite</strong><p>Shape bigger community services without gatekeepers or borrowed prestige.</p></article>
-            <article class="dish"><strong>Bring your table</strong><p>Connect Whole Donuts, TNC, Table928, and future community tables through +U.</p></article>
-            <article class="dish"><strong>Cause &amp; effect</strong><p>Measure what changed, learn honestly, and improve tomorrow’s menu.</p></article>
-          </div>
-        </section>
-
-        <section class="course" id="course-bombs" data-course="bombs" role="tabpanel" aria-labelledby="course-tab-bombs" hidden>
-          <h3>BOMBS <small>· desserts &amp; the register</small></h3>
-          <div class="course-grid">
-            <article class="dish"><strong>Whole Donuts goods window</strong><p><a href="#awd">Explore Whole Donuts</a><br><a href="https://cash.app/$wholedonuts">Support Whole Donuts</a></p></article>
-            <article class="dish"><strong>TNC goods window</strong><p><a href="#tnc">Explore The Nurtured Chef</a><br><a href="https://cash.app/$wholedonuts">Support Whole Donuts</a></p></article>
-            <article class="dish" id="free-merch"><strong>Free tools &amp; information</strong><p>Community drops will appear here when available. No purchase is required to sit at the table.</p></article>
-          </div>
-
-          <section class="virtual-store" aria-labelledby="virtual-store-title">
-            <p class="eyebrow">THE +U GOODS WINDOW</p>
-            <h3 id="virtual-store-title">Made by +U, 4 ALL.</h3>
-            <p id="virtual-store-copy">Small goods for carrying the table with you. Every person can support in their own way: share a skill, bring a connection, give time, offer a resource, or help sustain the work. These are browse-only concepts while the Shopify + Printful storefront is being prepared; no merchandise order or payment is collected here.</p>
-            <div class="product-grid">
-              <article class="product-card">
-                <span class="product-mark" aria-hidden="true">+U</span>
-                <h4 id="featured-product-title">Everyday Tee</h4>
-                <p id="featured-product-copy">Soft, simple, and ready for the long way home.</p>
-                <small>Printful made-to-order</small>
-              </article>
-              <article class="product-card">
-                <span class="product-mark" aria-hidden="true">4 ALL</span>
-                <h4>Table Tote</h4>
-                <p>For groceries, books, tools, and whatever helps the next person.</p>
-                <small>Printful made-to-order</small>
-              </article>
-              <article class="product-card">
-                <span class="product-mark" aria-hidden="true">+U</span>
-                <h4>Counter Mug</h4>
-                <p>A steady reminder to make room, take a breath, and begin again.</p>
-                <small>Printful made-to-order</small>
-              </article>
-              <article class="product-card">
-                <span class="product-mark" aria-hidden="true">4 ALL</span>
-                <h4>Open Water Poster</h4>
-                <p>A calm wall piece for the places where fresh starts happen.</p>
-                <small>Printful made-to-order</small>
-              </article>
-            </div>
-            <p id="storefront-status" class="storefront-status" aria-live="polite">This Goods Window is browse-only. Merchandise is not available to buy here yet; a verified Shopify + Printful storefront will be linked after it launches. Voluntary Cash App support is separate and does not purchase merchandise.</p>
-            <div id="storefront-actions" class="storefront-actions"></div>
-            <p class="virtual-store-note">These suggestions use only the welcome answers you gave on this device. Want to help shape the first drop or become a +U ambassador? <a href="mailto:thewholedonuts@gmail.com?subject=Made%20by%20%2BU%2C%204%20ALL%20ambassador">Tell us what you would carry and how you want to help.</a></p>
-          </section>
-
-          <div class="change-box">
-            <p><strong>Your bill:</strong> curiosity, cause, and effect.<br><strong>Your change:</strong> a private +U QR that is yours on this device.</p>
-            <button id="make-pass" type="button">Receive your +U change</button>
-            <div class="pass-card" id="pass-card" aria-live="polite" hidden>
-              <img id="pass-qr" alt="Your private +U QR" hidden>
-              <div class="pass-copy">
-                <p><strong id="pass-name"></strong> This browser can keep your +U pass when you return through your private link. No name, face, or payment information is requested here.</p>
-                <div class="pass-actions">
-                  <a id="open-pass-link" href="" target="_blank" rel="noopener noreferrer">Open my private +U link</a>
-                  <button id="copy-pass-link" type="button">Copy my private +U link</button>
-                </div>
-                <p class="pass-help" id="pass-help">The QR image is requested from a third-party QR service only after you ask for it.</p>
-                <p class="pass-fallback" id="pass-fallback" hidden>QR image unavailable right now. Use your private +U link instead.</p>
-              </div>
-            </div>
-          </div>
-
-          <section class="journey-offers" id="journey-offers" aria-labelledby="journey-offers-title">
-            <p class="eyebrow">YOUR NEXT BITE</p>
-            <h3 id="journey-offers-title">Start with what fits today.</h3>
-            <p id="journey-offers-copy">Answer the three welcome questions and this space will shape itself around what you came for.</p>
-            <div class="journey-offer-actions">
-              <a class="button primary" href="templates/plus-u-next-step-template.md">Get the free +U next-step template</a>
-              <a class="button store" href="https://cash.app/$wholedonuts">Support Whole Donuts</a>
-            </div>
-            <p class="journey-offers-note"><strong>Keep the table growing:</strong> support can be money, time, skills, materials, or a useful connection. Every contribution helps us pick up the crumbs, turn them into practical support, and make room for the next person. Financial gifts directly support sustainable Whole Donuts growth.</p>
-            <p class="journey-offers-note">Your answers guide this page on this device. Signed-in members can choose to carry that journey forward.</p>
-          </section>
-
-          <div class="fine-print">
-            <strong>At the register, plain and clear:</strong> +U passes are community identifiers, not money, currency, investments, ownership, prizes, gift cards, or promises of financial value. Purchases are optional and handled by the linked payment/store provider under its terms. Store availability, fulfillment, refunds, taxes, and product details must be confirmed before purchase. This page stores only the +U pass and last-visit time in this browser; opening a `?u=` link restores that pass in this browser, and clearing browser storage removes it. If you request a QR image, the encoded link is sent to a third-party QR image service to render it. Do not submit private, health, financial, or children’s information here.
-            <details><summary>Community table agreement</summary><p>Participate lawfully and respectfully. Community information is general information, not medical, legal, financial, or professional advice. No harassment, exploitation, impersonation, unsafe activity, or promises of guaranteed results. External links and community contributions remain the responsibility of their providers and authors.</p></details>
-          </div>
-        </section>
-      </div>
-
-      <div class="choices" aria-label="Open either side of the menu">
-        <a class="choice awd" href="#awd"><strong>Whole Donuts</strong><span>Community, experiments, services, and the .buzz store.</span></a>
-        <a class="choice tnc" href="#tnc"><strong>The Nurtured Chef</strong><span>Food, care, the foundation, and the Nutur3d Chef store.</span></a>
-      </div>
-      <p class="promise">No names. No faces. No entrance fee. Only cause and effect—yours or +U. Always treated by TNC.</p>
-
-      <section class="brochure" aria-labelledby="brochure-title">
-        <div class="brochure-head">
-          <p class="eyebrow">MOVEMENT · PRINT + DIGITAL COMPANION</p>
-          <h2 id="brochure-title">Bring the brochure and the site into the same flow.</h2>
-          <p>The Movement trifold works as the printable front door for +U, Whole Donuts, and The Nurtured Chef. Use it to discover, choose a branch, act, and respond.</p>
-        </div>
-        <div class="brochure-grid">
-          <article class="brochure-card">
-            <h3>Outside spread</h3>
-            <p><strong>MovementTrifoldOUTSIDE.png</strong></p>
-            <ul>
-              <li><strong>Back panel:</strong> About Movement, values, and stay connected footer</li>
-              <li><strong>Spine:</strong> vertical Movement wordmark with chef logo and stripe texture</li>
-              <li><strong>Front cover:</strong> chef hero, Movement title, pillars, and URL bar</li>
-            </ul>
-          </article>
-          <article class="brochure-card">
-            <h3>Inside spread</h3>
-            <p><strong>MovementTrifoldINSIDE.png</strong></p>
-            <ul>
-              <li><strong>Get involved:</strong> four programs and free footer</li>
-              <li><strong>Our story:</strong> quote, founding story, and 5K+/365/Free stats bar</li>
-              <li><strong>Scan &amp; respond:</strong> QR to wenevergonnaclose.com, rapid response note, and public contact</li>
-            </ul>
-          </article>
-        </div>
-        <div class="brochure-meta">
-          <article>
-            <h3>Print order</h3>
-            <ol>
-              <li>Print both spreads at 11×8.5 in landscape on duplex stock.</li>
-              <li>Use the outside image for side 1 and the inside image for side 2.</li>
-              <li>Fold the right panel in first, then fold the left panel over it.</li>
-            </ol>
-          </article>
-          <article>
-            <h3>Public sharing</h3>
-            <ul>
-              <li>Post the inside spread on social media so the QR stays scan-ready.</li>
-              <li>Email both spreads as a digital brochure attachment.</li>
-              <li>Use the brochure beside this site as a presentation and response tool.</li>
-            </ul>
-            <p><strong>Public contact:</strong> <a href="mailto:thewholedonuts@gmail.com">thewholedonuts@gmail.com</a></p>
-          </article>
         </div>
       </section>
     </section>
 
     <section id="awd" class="panel branch" aria-labelledby="awd-title">
-      <p class="eyebrow">WHOLE DONUTS · ONE SIDE OF THE MENU</p>
+      <p class="eyebrow">WHOLE DONUTS · THE COUNTER</p>
       <h2 id="awd-title">Every appetite belongs.</h2>
-      <p>Explore the Whole Donuts universe, community, and store. Come back to the Counter whenever you want another course.</p>
+      <p>Explore the Whole Donuts community, projects, and store. Come back to the entry whenever you want.</p>
       <div class="actions">
-        <a class="button primary" href="#awd">Open Whole Donuts</a>
-        <a class="button primary" href="#awd">Community &amp; cause</a>
-        <a class="button store" href="#awd">Browse the .buzz store</a>
-        <a class="button store" href="https://cash.app/$wholedonuts">Pay $wholedonuts ↗</a>
+        <a class="button primary" href="https://cash.app/$wholedonuts">Support Whole Donuts ↗</a>
+        <a class="button store" href="mailto:thewholedonuts@gmail.com">Say hello</a>
       </div>
-      <a class="back" href="#home">← Return to the Counter</a>
+      <a class="back" href="#home">← Back to the entry</a>
     </section>
 
     <section id="tnc" class="panel branch" aria-labelledby="tnc-title">
-      <p class="eyebrow">THE NURTURED CHEF · THE OTHER SIDE</p>
+      <p class="eyebrow">THE NURTURED CHEF · THE TABLE</p>
       <h2 id="tnc-title">Always treated by TNC.</h2>
-      <p>Choose the chef experience, the foundation, or the Nutur3d Chef store. Everything returns to the community table.</p>
+      <p>The Nurtured Chef — food, care, the foundation, and a place at the table for everyone.</p>
       <div class="actions">
-        <a class="button primary" href="#tnc">Open The Nurtured Chef</a>
-        <a class="button primary" href="#tnc">Foundation &amp; cause</a>
-        <a class="button store" href="#tnc">Browse the chef store</a>
-        <a class="button store" href="https://cash.app/$wholedonuts">Pay $wholedonuts ↗</a>
+        <a class="button primary" href="https://cash.app/$wholedonuts">Support TNC ↗</a>
+        <a class="button store" href="mailto:thewholedonuts@gmail.com">Say hello</a>
       </div>
-      <a class="back" href="#home">← Return to the Counter</a>
+      <a class="back" href="#home">← Back to the entry</a>
     </section>
   </main>
 
