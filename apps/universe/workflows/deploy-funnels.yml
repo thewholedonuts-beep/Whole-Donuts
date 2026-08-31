@@ -76,7 +76,7 @@ jobs:
 
       - name: Build deployment tool
         run: |
-          go build -o bin/funnel-deploy ./cmd/funnel-cli
+          go build -o bin/funnel-deploy ./cmd/funnel-deploy
           chmod +x bin/funnel-deploy
 
       - name: Deploy funnels
