@@ -303,9 +303,10 @@ router.post('/webhook/shopify', async (req, res, next) => {
     return res.status(201).json({ order: order.rows[0], synced: true });
   } catch (error) {
     if (eventId) {
+      const errorMessage = String(error?.message ?? error).slice(0, 1000);
       await query(
         'UPDATE integration_events SET status = $2, error_message = $3 WHERE id = $1',
-        [eventId, 'failed', error.message.slice(0, 1000)]
+        [eventId, 'failed', errorMessage]
       ).catch((updateError) => console.error('Failed to record Shopify webhook error', updateError));
     }
     return next(error);
