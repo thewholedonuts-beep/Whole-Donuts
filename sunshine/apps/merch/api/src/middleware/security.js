@@ -12,7 +12,12 @@ function parseCookies(req, _res, next) {
       .map((part) => {
         const separator = part.indexOf('=');
         if (separator === -1) return [part, ''];
-        return [part.slice(0, separator), decodeURIComponent(part.slice(separator + 1))];
+        const value = part.slice(separator + 1);
+        try {
+          return [part.slice(0, separator), decodeURIComponent(value)];
+        } catch {
+          return [part.slice(0, separator), value];
+        }
       })
   );
   next();
