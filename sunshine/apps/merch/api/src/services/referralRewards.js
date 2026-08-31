@@ -1,10 +1,10 @@
 const { withTransaction } = require('../config/database');
 const { calculateEffortScore, applyTierDiscountCap } = require('../utils/effortScore');
 
-async function recordVerifiedReferralConversion({ code, orderId, total, integrationEventId }) {
+async function recordReferralConversion({ code, orderId, total }) {
   const contribution = Number(total);
   if (!Number.isFinite(contribution) || contribution < 0) {
-    throw new Error('Verified order total is invalid.');
+    throw new Error('Order total is invalid.');
   }
 
   return withTransaction(async (client) => {
@@ -23,11 +23,11 @@ async function recordVerifiedReferralConversion({ code, orderId, total, integrat
 
     const referralCode = codeResult.rows[0];
     const eventResult = await client.query(
-      `INSERT INTO referral_events (code_id, event_type, order_id, metadata, fraud_score, verified_payment, integration_event_id)
-       VALUES ($1, 'conversion', $2, $3::jsonb, 0, true, $4)
+      `INSERT INTO referral_events (code_id, event_type, order_id, metadata, fraud_score, verified_payment)
+       VALUES ($1, 'conversion', $2, $3::jsonb, 0, true)
        ON CONFLICT (code_id, order_id) WHERE event_type = 'conversion' AND order_id IS NOT NULL AND verified_payment DO NOTHING
        RETURNING id`,
-      [referralCode.id, orderId, JSON.stringify({ source: 'verified-referral-conversion' }), integrationEventId]
+      [referralCode.id, orderId, JSON.stringify({ source: 'referral-conversion' })]
     );
     if (!eventResult.rowCount) {
       return { sponsorId: referralCode.sponsor_id, recorded: false };
@@ -79,5 +79,5 @@ async function recordVerifiedReferralConversion({ code, orderId, total, integrat
 }
 
 module.exports = {
-  recordVerifiedReferralConversion,
+  recordReferralConversion,
 };
