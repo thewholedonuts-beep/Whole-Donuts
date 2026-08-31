@@ -1,0 +1,118 @@
+# WholeDonut Money Funnel Configuration
+# This file defines all money-making funnels across your domains
+
+domains:
+  - name: wholedonuts
+    tld: org
+    status: active
+    registrar: porkbun
+    funnels:
+      - lead-capture-org
+      - webinar-org
+
+  - name: wholedonuts
+    tld: buzz
+    status: active
+    registrar: porkbun
+    funnels:
+      - checkout-buzz
+      - upsell-buzz
+
+  - name: wholedonuts
+    tld: app
+    status: inactive
+    registrar: porkbun
+    funnels: []
+
+  - name: wenevergonnaclose
+    tld: com
+    status: inactive
+    registrar: porkbun
+    funnels: []
+
+  - name: thenurturedchef
+    tld: com
+    status: inactive
+    registrar: porkbun
+    funnels: []
+
+  - name: thenurturedchef
+    tld: foundation
+    status: inactive
+    registrar: porkbun
+    funnels: []
+
+  - name: thenutur3dchef
+    tld: com
+    status: active
+    registrar: porkbun
+    funnels:
+      - content-chef
+      - course-chef
+
+funnels:
+  lead-capture-org:
+    name: Lead Capture - WholeDonut Org
+    domain: wholedonuts.org
+    status: active
+    server_ip: ${SERVER_IP_1}
+    steps:
+      landing:
+        subdomain: landing-capture
+        type: landing_page
+        target_ip: ${SERVER_IP_1}
+      checkout:
+        subdomain: checkout-capture
+        type: checkout
+        target_ip: ${SERVER_IP_1}
+      confirmation:
+        subdomain: thankyou-capture
+        type: thank_you
+        target_ip: ${SERVER_IP_1}
+    email_provider: sendgrid
+    email_list: lead-list-1
+    tracking_id: lead-capture-org
+
+  checkout-buzz:
+    name: Checkout Funnel - WholeDonut Buzz
+    domain: wholedonuts.buzz
+    status: active
+    server_ip: ${SERVER_IP_2}
+    steps:
+      landing:
+        subdomain: landing-checkout
+        type: landing_page
+        target_ip: ${SERVER_IP_2}
+      checkout:
+        subdomain: pay
+        type: checkout
+        target_ip: ${SERVER_IP_2}
+      confirmation:
+        subdomain: success
+        type: thank_you
+        target_ip: ${SERVER_IP_2}
+    email_provider: mailchimp
+    payment_gateway: stripe
+    tracking_id: checkout-buzz
+
+  content-chef:
+    name: Nutrition Content - TheNutur3dChef
+    domain: thenutur3dchef.com
+    status: active
+    server_ip: ${SERVER_IP_3}
+    steps:
+      landing:
+        subdomain: class
+        type: landing_page
+        target_ip: ${SERVER_IP_3}
+      checkout:
+        subdomain: enroll
+        type: checkout
+        target_ip: ${SERVER_IP_3}
+      confirmation:
+        subdomain: welcome
+        type: thank_you
+        target_ip: ${SERVER_IP_3}
+    email_provider: activecampaign
+    course_id: nutrition-course-101
+    tracking_id: content-chef

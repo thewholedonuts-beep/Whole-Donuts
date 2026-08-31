@@ -1,0 +1,261 @@
+/* Wenevergonnaclose.com — Landing gateway styles */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --color-bg: #0a0a0a;
+  --color-text: #f0f0f0;
+  --color-accent: #ffdd00;
+  --color-donuts: #ff6b35;
+  --color-chef: #4caf8a;
+  --color-split-line: #ffffff;
+  --font-main: 'Courier New', Courier, monospace;
+  --transition-slow: 0.8s ease;
+  --transition-medium: 0.4s ease;
+}
+
+html, body {
+  height: 100%;
+  width: 100%;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-main);
+  overflow: hidden;
+}
+
+#app {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+/* ── Stick-figure intro ────────────────────────────────── */
+
+.intro-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+  background: var(--color-bg);
+  animation: fadeIn 1s ease forwards;
+}
+
+.intro-screen .tagline {
+  font-size: clamp(0.9rem, 2vw, 1.2rem);
+  letter-spacing: 0.15em;
+  color: var(--color-accent);
+  margin-top: 1.5rem;
+  opacity: 0;
+  animation: slideUp 0.6s ease 0.8s forwards;
+}
+
+.intro-screen .enter-hint {
+  margin-top: 2.5rem;
+  font-size: 0.85rem;
+  letter-spacing: 0.2em;
+  color: #888;
+  opacity: 0;
+  animation: pulse 2s ease 1.6s infinite;
+  cursor: pointer;
+  border: 1px solid #444;
+  padding: 0.5rem 1.5rem;
+  border-radius: 2px;
+  transition: border-color var(--transition-medium), color var(--transition-medium);
+}
+
+.intro-screen .enter-hint:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+/* ── "+U" / BEPZITIV animation ─────────────────────────── */
+
+.plus-u-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+  background: var(--color-bg);
+}
+
+.plus-u-text {
+  font-size: clamp(4rem, 15vw, 10rem);
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  color: var(--color-accent);
+  animation: zoomIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.bepzitiv-text {
+  font-size: clamp(1rem, 3vw, 1.8rem);
+  letter-spacing: 0.4em;
+  color: var(--color-text);
+  margin-top: 0.5rem;
+  opacity: 0;
+  animation: fadeIn 0.5s ease 0.4s forwards;
+}
+
+/* ── Split screen ──────────────────────────────────────── */
+
+.split-screen {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  position: relative;
+}
+
+.split-screen::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--color-split-line);
+  transform: scaleY(0);
+  transform-origin: center;
+  animation: growLine 0.4s ease 0.2s forwards;
+}
+
+.ecosystem-side {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: flex var(--transition-slow);
+  padding: 2rem;
+  text-align: center;
+}
+
+.ecosystem-side:hover {
+  flex: 1.15;
+}
+
+.ecosystem-side--donuts {
+  background: linear-gradient(135deg, #1a0d00 0%, #2d1500 100%);
+}
+
+.ecosystem-side--donuts:hover {
+  background: linear-gradient(135deg, #2d1500 0%, #3d2000 100%);
+}
+
+.ecosystem-side--chef {
+  background: linear-gradient(135deg, #001a10 0%, #002d1a 100%);
+}
+
+.ecosystem-side--chef:hover {
+  background: linear-gradient(135deg, #002d1a 0%, #003d25 100%);
+}
+
+.ecosystem-side .side-label {
+  font-size: clamp(1.5rem, 5vw, 3rem);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: slideUp 0.5s ease 0.6s forwards;
+}
+
+.ecosystem-side--donuts .side-label { color: var(--color-donuts); }
+.ecosystem-side--chef .side-label   { color: var(--color-chef); }
+
+.ecosystem-side .side-domains {
+  margin-top: 1rem;
+  font-size: clamp(0.65rem, 1.5vw, 0.85rem);
+  color: #aaa;
+  line-height: 1.8;
+  opacity: 0;
+  animation: fadeIn 0.5s ease 1s forwards;
+}
+
+.ecosystem-side .side-cta {
+  margin-top: 1.5rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.25em;
+  padding: 0.4rem 1rem;
+  border: 1px solid currentColor;
+  border-radius: 2px;
+  opacity: 0;
+  animation: fadeIn 0.5s ease 1.2s forwards;
+  transition: transform var(--transition-medium), opacity var(--transition-medium);
+}
+
+.ecosystem-side--donuts .side-cta { color: var(--color-donuts); }
+.ecosystem-side--chef .side-cta   { color: var(--color-chef); }
+
+.ecosystem-side:hover .side-cta { transform: scale(1.05); }
+
+/* ── Stick-figure SVG inline sizing ────────────────────── */
+
+.stick-figure {
+  width: clamp(80px, 15vw, 140px);
+  height: auto;
+}
+
+/* ── Keyframes ─────────────────────────────────────────── */
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes zoomIn {
+  from { opacity: 0; transform: scale(0.4); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.4; }
+  50%       { opacity: 1; }
+}
+
+@keyframes growLine {
+  from { transform: scaleY(0); }
+  to   { transform: scaleY(1); }
+}
+
+/* ── Responsive ────────────────────────────────────────── */
+
+@media (max-width: 640px) {
+  .split-screen {
+    flex-direction: column;
+  }
+
+  .split-screen::after {
+    left: 0;
+    right: 0;
+    top: 50%;
+    bottom: auto;
+    width: 100%;
+    height: 2px;
+    transform: scaleX(0);
+    transform-origin: center;
+    animation: growLineH 0.4s ease 0.2s forwards;
+  }
+
+  @keyframes growLineH {
+    from { transform: scaleX(0); }
+    to   { transform: scaleX(1); }
+  }
+
+  .ecosystem-side:hover {
+    flex: 1.2;
+  }
+}

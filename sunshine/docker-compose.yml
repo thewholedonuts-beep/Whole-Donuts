@@ -1,0 +1,63 @@
+version: "3.9"
+
+services:
+  # ── Public site + merch frontend (nginx) ──────────────────
+  public-site:
+    build:
+      context: .
+      target: public-site
+    ports:
+      - "8080:80"
+    depends_on:
+      merch-api:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # ── Merch API ─────────────────────────────────────────────
+  merch-api:
+    build:
+      context: .
+      target: merch-api
+    ports:
+      - "3001:3001"
+    environment:
+      NODE_ENV: development
+      DATABASE_URL: ${DATABASE_URL:-postgresql://postgres:postgres@postgres:5432/wholedonuts}
+      SHOPIFY_STORE_DOMAIN: ${SHOPIFY_STORE_DOMAIN}
+      SHOPIFY_STOREFRONT_TOKEN: ${SHOPIFY_STOREFRONT_TOKEN}
+      SHOPIFY_ADMIN_TOKEN: ${SHOPIFY_ADMIN_TOKEN}
+      PRINTFUL_API_KEY: ${PRINTFUL_API_KEY}
+      SUPABASE_URL: ${SUPABASE_URL}
+      SUPABASE_SERVICE_KEY: ${SUPABASE_SERVICE_KEY}
+      JWT_SECRET: ${JWT_SECRET}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3001/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  # ── PostgreSQL ────────────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: wholedonuts
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./data/postgres/migrations:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+volumes:
+  postgres-data:

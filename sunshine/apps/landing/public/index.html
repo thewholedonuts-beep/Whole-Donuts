@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>wenevergonnaclose.com</title>
+  <meta name="description"
+        content="The gateway to the Whole Donuts and Nurtured Chef ecosystems." />
+  <link rel="stylesheet" href="styles/landing.css" />
+</head>
+<body>
+  <div id="app">
+    <!-- Phase 1: Stick-figure intro -->
+    <section id="phase-intro" class="intro-screen" aria-label="Welcome">
+      <img
+        src="assets/stick-figures.svg"
+        alt="Stick figure waving hello"
+        class="stick-figure"
+        width="120"
+        height="180"
+      />
+      <img
+        src="assets/logo.svg"
+        alt="wenevergonnaclose"
+        style="width:clamp(200px,50vw,360px); margin-top:1.5rem;"
+        width="320"
+        height="80"
+      />
+      <p class="tagline">+ U &nbsp;·&nbsp; BEPZITIV</p>
+      <button class="enter-hint" id="btn-enter" aria-label="Enter">
+        ENTER
+      </button>
+    </section>
+
+    <!-- Phase 2: "+U" animation -->
+    <section id="phase-plus-u" class="plus-u-screen" hidden aria-label="+U BEPZITIV">
+      <div class="plus-u-text" aria-hidden="true">+U</div>
+      <div class="bepzitiv-text">BEPZITIV</div>
+    </section>
+
+    <!-- Phase 3: Dual ecosystem split screen -->
+    <section id="phase-split" class="split-screen" hidden aria-label="Choose your path">
+      <!-- LEFT: Whole Donuts -->
+      <div
+        class="ecosystem-side ecosystem-side--donuts"
+        role="button"
+        tabindex="0"
+        aria-label="Enter the Whole Donuts ecosystem"
+      >
+        <div class="side-label">Whole Donuts</div>
+        <div class="side-domains" aria-label="Domains">
+          wholedonuts.org<br/>
+          wholedonuts.app<br/>
+          wholedonuts.me<br/>
+          wholedonuts.pro<br/>
+          wholedonuts.buzz<br/>
+          wholedonuts.store
+        </div>
+        <div class="side-cta">EXPLORE →</div>
+      </div>
+
+      <!-- RIGHT: Nurtured Chef -->
+      <div
+        class="ecosystem-side ecosystem-side--chef"
+        role="button"
+        tabindex="0"
+        aria-label="Enter the Nurtured Chef ecosystem"
+      >
+        <div class="side-label">Nurtured Chef</div>
+        <div class="side-domains" aria-label="Domains">
+          thenurturedchef.com<br/>
+          thenurturedchef.foundation<br/>
+          thenutur3dchef.com
+        </div>
+        <div class="side-cta">EXPLORE →</div>
+      </div>
+    </section>
+  </div>
+
+  <script src="gateway.js"></script>
+</body>
+</html>
