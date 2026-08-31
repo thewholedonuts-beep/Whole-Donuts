@@ -49,10 +49,6 @@ function validateProductionEnvironment() {
     'IP_HASH_SALT',
     'OPERATOR_API_KEY',
     'FRONTEND_URLS',
-    'SHOPIFY_STORE_URL',
-    'SHOPIFY_ACCESS_TOKEN',
-    'SHOPIFY_WEBHOOK_SECRET',
-    'PRINTFUL_API_KEY',
   ];
   const missing = required.filter((name) => !process.env[name]);
 
@@ -67,10 +63,6 @@ function validateProductionEnvironment() {
   });
 
   frontendOrigins();
-
-  if (!/^[a-z0-9][a-z0-9.-]*\.myshopify\.com$/i.test(process.env.SHOPIFY_STORE_URL)) {
-    throw new Error('SHOPIFY_STORE_URL must be a Shopify store hostname without a protocol or path.');
-  }
 }
 
 function trustProxySetting() {

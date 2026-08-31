@@ -84,15 +84,15 @@ router.get('/:id', async (req, res, next) => {
 
 router.post('/', authenticateToken, requireAdmin, async (req, res, next) => {
   try {
-    const { name, description, baseCost, markupPercent = 20, category, printMethods, availableColors, customizationOptions, shopifyProductId, printfulProductId, inventoryCount = 0, active = true } = req.body;
+    const { name, description, baseCost, markupPercent = 20, category, printMethods, availableColors, customizationOptions, inventoryCount = 0, active = true } = req.body;
 
     if (!name || Number(baseCost) <= 0) {
       return res.status(400).json({ error: 'Product name and baseCost are required.' });
     }
 
     const result = await query(
-      `INSERT INTO products (name, description, base_cost, markup_percent, category, print_methods, available_colors, customization_options, shopify_product_id, printful_product_id, inventory_count, active)
-       VALUES ($1, $2, $3, $4, $5, $6, $7::jsonb, $8::jsonb, $9, $10, $11, $12)
+      `INSERT INTO products (name, description, base_cost, markup_percent, category, print_methods, available_colors, customization_options, inventory_count, active)
+       VALUES ($1, $2, $3, $4, $5, $6, $7::jsonb, $8::jsonb, $9, $10)
        RETURNING *`,
       [
         name,
@@ -103,8 +103,6 @@ router.post('/', authenticateToken, requireAdmin, async (req, res, next) => {
         parseArray(printMethods),
         JSON.stringify(parseArray(availableColors)),
         JSON.stringify(parseObject(customizationOptions)),
-        shopifyProductId || null,
-        printfulProductId || null,
         Number(inventoryCount) || 0,
         Boolean(active),
       ]
@@ -135,10 +133,8 @@ router.put('/:id', authenticateToken, requireAdmin, async (req, res, next) => {
            print_methods = $7,
            available_colors = $8::jsonb,
            customization_options = $9::jsonb,
-           shopify_product_id = $10,
-           printful_product_id = $11,
-           inventory_count = $12,
-           active = $13,
+           inventory_count = $10,
+           active = $11,
            updated_at = NOW()
        WHERE id = $1
        RETURNING *`,
@@ -152,8 +148,6 @@ router.put('/:id', authenticateToken, requireAdmin, async (req, res, next) => {
         parseArray(payload.printMethods ?? current.print_methods),
         JSON.stringify(payload.availableColors ?? current.available_colors),
         JSON.stringify(payload.customizationOptions ?? current.customization_options),
-        payload.shopifyProductId ?? current.shopify_product_id,
-        payload.printfulProductId ?? current.printful_product_id,
         Number(payload.inventoryCount ?? current.inventory_count),
         payload.active ?? current.active,
       ]

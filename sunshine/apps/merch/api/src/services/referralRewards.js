@@ -4,7 +4,7 @@ const { calculateEffortScore, applyTierDiscountCap } = require('../utils/effortS
 async function recordVerifiedReferralConversion({ code, orderId, total, integrationEventId }) {
   const contribution = Number(total);
   if (!Number.isFinite(contribution) || contribution < 0) {
-    throw new Error('Verified Shopify order total is invalid.');
+    throw new Error('Verified order total is invalid.');
   }
 
   return withTransaction(async (client) => {
@@ -27,7 +27,7 @@ async function recordVerifiedReferralConversion({ code, orderId, total, integrat
        VALUES ($1, 'conversion', $2, $3::jsonb, 0, true, $4)
        ON CONFLICT (code_id, order_id) WHERE event_type = 'conversion' AND order_id IS NOT NULL AND verified_payment DO NOTHING
        RETURNING id`,
-      [referralCode.id, orderId, JSON.stringify({ source: 'verified-shopify-webhook' }), integrationEventId]
+      [referralCode.id, orderId, JSON.stringify({ source: 'verified-referral-conversion' }), integrationEventId]
     );
     if (!eventResult.rowCount) {
       return { sponsorId: referralCode.sponsor_id, recorded: false };

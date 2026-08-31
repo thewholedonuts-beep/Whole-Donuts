@@ -28,21 +28,12 @@ The frontend API base URL is public and baked into the frontend build. Every oth
 | `FRONTEND_URLS` | Comma-separated exact dashboard origins, such as `https://<merch-domain>` |
 | `JWT_SECRET`, `IP_HASH_SALT`, `OPERATOR_API_KEY` | Three distinct cryptographically random values, each at least 32 characters |
 | `JWT_EXPIRES_IN`, `SESSION_COOKIE_MAX_AGE_SECONDS` | Matching short session lifetime, such as `8h` and `28800` |
-| `SHOPIFY_STORE_URL` | Shopify hostname only |
-| `SHOPIFY_ACCESS_TOKEN`, `SHOPIFY_WEBHOOK_SECRET` | Shopify custom app |
-| `SHOPIFY_WEBHOOK_TOPICS` | Exact subscribed topics |
-| `PRINTFUL_API_KEY` | Printful account/store API token |
 | `NEXT_PUBLIC_API_BASE_URL` | `https://<api-domain>/api`; frontend build environment only |
 | `TRUST_PROXY` | Managed host proxy hop count, normally `1` |
 | `DATABASE_SSL_CA` | Provider CA only when required; retain verified TLS by default |
 | `MIGRATIONS_DIRECTORY` | Image default; do not override unless the migration files are mounted elsewhere |
 
-Set `NODE_ENV=production`. Production startup fails when its required configuration is missing, insecure TLS is selected without explicit acknowledgement, origins are not HTTPS, or the Shopify store value is malformed.
-
-Migration `003_verified_payment_attribution.sql` resets historical contribution,
-tier, reward, and conversion counters because records created before the verified
-payment boundary have no immutable payment provenance. Only future HMAC-verified,
-paid Shopify order webhooks can restore financial attribution.
+Set `NODE_ENV=production`. Production startup fails when its required configuration is missing, insecure TLS is selected without explicit acknowledgement, or origins are not HTTPS.
 
 ## Release procedure
 
@@ -51,10 +42,9 @@ paid Shopify order webhooks can restore financial attribution.
 3. Run `npm run migrate` as a one-off release command against the target database. Confirm it completes before starting new application versions.
 4. Deploy the API, wait for `/ready`, then deploy the dashboard. Configure the provider scheduler to run the metric refresh command once each hour.
 5. Configure custom domains, DNS, and managed TLS. Restrict CORS to the deployed dashboard origin.
-6. Register Shopify webhooks only after the API is healthy; complete the Shopify and Printful release checks.
 
 ## Rollback and operations
 
-Keep the previous service image available. Roll back service images independently when a release fails, but do not roll back database migrations by deleting data. Use forward-only corrective migrations. Review API logs by request ID and alert on readiness failures, webhook failures, and scheduled-job failures.
+Keep the previous service image available. Roll back service images independently when a release fails, but do not roll back database migrations by deleting data. Use forward-only corrective migrations. Review API logs by request ID and alert on readiness failures and scheduled-job failures.
 
-Test a database restore before production launch and at the interval required by Whole Donuts operations. Rotate Shopify, Printful, operator, session, and referral secrets through the provider secret manager; redeploy affected services after each rotation.
+Test a database restore before production launch and at the interval required by Whole Donuts operations. Rotate operator, session, and referral secrets through the provider secret manager; redeploy affected services after each rotation.

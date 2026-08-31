@@ -17,16 +17,6 @@ function normalizeOrderItems(items) {
   });
 }
 
-function isVerifiedPaidShopifyOrder(topic, payload) {
-  return (
-    ['orders/create', 'orders/updated'].includes(topic) &&
-    payload &&
-    payload.id !== undefined &&
-    payload.id !== null &&
-    payload.financial_status === 'paid'
-  );
-}
-
 function newSponsorFinancialDefaults() {
   return {
     totalContribution: 0,
@@ -38,6 +28,5 @@ function newSponsorFinancialDefaults() {
 
 module.exports = {
   normalizeOrderItems,
-  isVerifiedPaidShopifyOrder,
   newSponsorFinancialDefaults,
 };

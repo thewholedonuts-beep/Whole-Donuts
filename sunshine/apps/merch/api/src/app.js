@@ -6,8 +6,6 @@ const sponsorsRouter = require('./routes/sponsors');
 const referralRouter = require('./routes/referral');
 const productsRouter = require('./routes/products');
 const ordersRouter = require('./routes/orders');
-const shopifyRouter = require('./routes/shopify');
-const printfulRouter = require('./routes/printful');
 const { generalApiLimiter } = require('./middleware/rateLimiter');
 const { query } = require('./config/database');
 const { frontendOrigins, isProduction, trustProxySetting } = require('./config/environment');
@@ -45,9 +43,6 @@ app.use((req, res, next) => {
   next();
 });
 app.use((req, res, next) => {
-  if (req.path === '/api/orders/webhook/shopify') {
-    return next();
-  }
   return generalApiLimiter(req, res, next);
 });
 
@@ -68,8 +63,6 @@ app.use('/api/sponsors', sponsorsRouter);
 app.use('/api/referral', referralRouter);
 app.use('/api/products', productsRouter);
 app.use('/api/orders', ordersRouter);
-app.use('/api/shopify', shopifyRouter);
-app.use('/api/printful', printfulRouter);
 
 app.use((req, res) => {
   res.status(404).json({ error: `Route not found: ${req.method} ${req.originalUrl}` });

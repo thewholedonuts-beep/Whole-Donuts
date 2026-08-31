@@ -55,12 +55,11 @@ export default function HomePage() {
           Launch and scale your Whole Donuts e-commerce merch program.
         </h1>
         <p className="mt-6 max-w-xl text-lg text-slate-300">
-          Manage sponsor tiers, personalized merchandise, Shopify order sync, and fraud-aware referral campaigns from one dashboard.
+          Manage sponsor tiers, personalized merchandise, and fraud-aware referral campaigns from one dashboard.
         </p>
         <div className="mt-8 flex flex-wrap gap-4 text-sm text-slate-300">
           <span className="rounded-full bg-slate-900/70 px-4 py-2">20% built-in markup</span>
           <span className="rounded-full bg-slate-900/70 px-4 py-2">Tier-based discounts</span>
-          <span className="rounded-full bg-slate-900/70 px-4 py-2">Shopify + Printful ready</span>
         </div>
         <div className="mt-10 flex gap-4">
           <Link href="/dashboard/products" className="rounded-full bg-brand-500 px-6 py-3 font-semibold text-slate-950 transition hover:bg-brand-400">

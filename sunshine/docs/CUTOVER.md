@@ -23,9 +23,3 @@ Host the API, dashboard, and private PostgreSQL database as separate services. A
 `data/postgres/migrations/` with a controlled release job, provide API runtime
 secrets through the hosting provider, and set the dashboard's public API URL at
 build time. The example Docker definitions are not an external deployment action.
-
-Configure Shopify and Printful only after the API is reachable over its final HTTPS
-URL: create the Shopify custom app and its least-privilege credentials, store Shopify
-and Printful secrets in the provider secret manager, then register verified webhooks
-to the API. **No live checkout or fulfillment exists until these external settings,
-hosting, secrets, and webhooks are configured.**

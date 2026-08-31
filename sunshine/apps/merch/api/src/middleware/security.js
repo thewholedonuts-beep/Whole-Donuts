@@ -35,7 +35,7 @@ function equalValues(left, right) {
 }
 
 function csrfProtection(req, res, next) {
-  if (SAFE_METHODS.has(req.method) || req.path === '/api/orders/webhook/shopify' || !req.cookies.wd_session) {
+  if (SAFE_METHODS.has(req.method) || !req.cookies.wd_session) {
     return next();
   }
 

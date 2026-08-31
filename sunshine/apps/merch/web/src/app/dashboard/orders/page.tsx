@@ -36,7 +36,7 @@ export default function OrdersPage() {
         <p className="text-sm uppercase tracking-[0.25em] text-brand-300">Order operations</p>
         <h1 className="mt-2 text-4xl font-semibold text-white">Manage sponsor-linked orders</h1>
         <p className="mt-3 max-w-2xl text-slate-300">
-          Track fulfillment, referral attribution, and customer activity synchronized from Shopify and direct dashboard orders.
+          Track fulfillment, referral attribution, and customer activity from direct dashboard orders.
         </p>
       </div>
 

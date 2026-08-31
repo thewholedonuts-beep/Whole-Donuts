@@ -3,7 +3,7 @@ import './globals.css';
 
 export const metadata: Metadata = {
   title: 'Whole Donuts Merch Platform',
-  description: 'Sponsor merch management, referrals, and Shopify operations dashboard.',
+  description: 'Sponsor merch management and referrals dashboard.',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
