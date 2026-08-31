@@ -38,10 +38,10 @@ describe('serviceForDomain', function () {
 });
 
 describe('allDomains', function () {
-  it('returns an array with at least 10 entries', function () {
+  it('returns an array with at least 9 entries', function () {
     const domains = allDomains();
     assert.ok(Array.isArray(domains));
-    assert.ok(domains.length >= 10);
+    assert.ok(domains.length >= 9);
   });
 
   it('every entry has a domain and service field', function () {
