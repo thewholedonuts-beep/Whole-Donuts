@@ -97,13 +97,15 @@ func (so *ScalingOrchestrator) ExecuteScaling(ctx context.Context, strategyName 
 					"emailProvider":  "sendgrid",
 				}
 
+				mu.Lock()
 				_, err := so.manager.CreateFunnel(ctx, funnelID, funnelName, d, serverIP, config)
+				if err == nil {
+					deployedCount++
+				}
+				mu.Unlock()
 				if err != nil {
 					errorChan <- fmt.Errorf("failed to deploy %s: %w", funnelID, err)
 				} else {
-					mu.Lock()
-					deployedCount++
-					mu.Unlock()
 					fmt.Printf("   ✅ Deployed %s\n", funnelID)
 				}
 			}(domain, funnelNum, domainIdx, strategy.ServerIPs[funnelNum%len(strategy.ServerIPs)])
