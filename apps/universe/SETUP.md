@@ -12,12 +12,11 @@
 
 ```bash
 # Clone the repository
-git clone https://github.com/thewholedonuts-beep/wholedonuts-universe.git
-cd wholedonuts-universe
+git clone https://github.com/thewholedonuts-beep/wholedonuts-sunshine.git
+cd wholedonuts-sunshine/apps/universe
 
 # Setup environment
 make setup
-```
 
 ### Step 2: Configure Environment Variables
 
