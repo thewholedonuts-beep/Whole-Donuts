@@ -142,7 +142,9 @@ func (nm *NetworkManager) ActivateNetwork(networkName string) error {
 
 	fmt.Printf("\n🚀 Activating network '%s'\n", networkName)
 	for _, funnelID := range network.Funnels {
-		nm.manager.ActivateFunnel(funnelID)
+		if err := nm.manager.ActivateFunnel(funnelID); err != nil {
+			log.Printf("⚠️  Failed to activate funnel %s: %v", funnelID, err)
+		}
 	}
 	network.Status = "active"
 	fmt.Printf("✅ Network '%s' is now ACTIVE\n", networkName)
@@ -160,7 +162,9 @@ func (nm *NetworkManager) DeactivateNetwork(networkName string) error {
 
 	fmt.Printf("\n⏸️  Deactivating network '%s'\n", networkName)
 	for _, funnelID := range network.Funnels {
-		nm.manager.DeactivateFunnel(funnelID)
+		if err := nm.manager.DeactivateFunnel(funnelID); err != nil {
+			log.Printf("⚠️  Failed to deactivate funnel %s: %v", funnelID, err)
+		}
 	}
 	network.Status = "inactive"
 	fmt.Printf("✅ Network '%s' is now INACTIVE\n", networkName)
