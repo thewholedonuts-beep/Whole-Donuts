@@ -107,14 +107,16 @@ func (nm *NetworkManager) DeployNetworkFunnel(ctx context.Context, networkName, 
 			}
 
 			domainFunnelID := fmt.Sprintf("%s-%s", funnelID, d)
+			mu.Lock()
 			_, err := nm.manager.CreateFunnel(ctx, domainFunnelID, funnelName, d, serverIP, funnelConfig)
+			if err == nil {
+				successCount++
+			}
+			mu.Unlock()
 			if err != nil {
 				errorChan <- fmt.Errorf("failed to deploy to %s: %w", d, err)
 			} else {
 				fmt.Printf("   ✅ Deployed to %s\n", d)
-				mu.Lock()
-				successCount++
-				mu.Unlock()
 			}
 		}(domain)
 	}
